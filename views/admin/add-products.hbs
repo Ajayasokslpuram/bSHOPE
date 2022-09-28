@@ -1,0 +1,37 @@
+<div class="col-lg-9 p-5">
+					<form class="row contact_form" enctype="multipart/form-data" action="/admin/addproducts" method="post" id="contactForm" novalidate="novalidate">
+						<div class="col-md-6">
+							<div class="form-group">
+								<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'">
+							</div>
+							<div class="form-group">
+								<input type="email" class="form-control" id="email" name="category" placeholder="Category" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" id="subject" name="price" placeholder="Price" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<textarea class="form-control" name="description" id="message" rows="1" placeholder="Description" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'"></textarea>
+							</div>
+						</div>
+                         <div class="quantity-container d-flex align-items-center mt-15 ml-3">
+										<small class="mr-2">Quantity:</small>
+										<input type="text" name="quantity" class="quantity-amount ml-15" value="1" />
+										<div class="arrow-btn d-inline-flex flex-column">
+											<button class="increase arrow" type="button" title="Increase Quantity"><span class="lnr lnr-chevron-up"></span></button>
+											<button class="decrease arrow" type="button" title="Decrease Quantity"><span class="lnr lnr-chevron-down"></span></button>
+										</div>
+                        </div>
+                        
+                        <label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Image</small> </label>
+                        <input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  style="width:25%;"/>
+						<div class="col-md-12 text-right">
+							<button type="submit" value="submit" class="primary-btn">Add Product</button>
+						</div>
+
+                       
+
+					</form>
+				</div>
