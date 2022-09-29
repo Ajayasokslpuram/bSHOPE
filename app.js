@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var session= require('express-session')
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
@@ -33,7 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(fileUpload())
-
+app.use(session({secret:"Key",cookie:{maxAge:600000}}))
 
 db.connect((err)=>{
   if(err) console.log("DB connection ERROR")
