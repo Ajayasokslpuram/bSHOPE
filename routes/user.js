@@ -20,12 +20,16 @@ router.get('/', function(req, res, next) {
  
   
 });
+// =============================product details page======================
 
-router.get('/productdetails', function(req, res, next) {
-  productHelpers.getAllProducts().then((products)=>{
-    res.render('user/product-details',{products})
+router.get('/productdetails/:id', function(req, res, next) {
+  productHelpers.getProductDetails(req.params.id).then((product)=>{
+    console.log(product)
+    res.render('user/product-details',{product})
   })
 });
+
+// ============================================================================
 
 router.get('/login', function(req, res, next) {
   if(req.session.user){
@@ -40,14 +44,12 @@ router.get('/login', function(req, res, next) {
 
 router.post('/signin', function(req, res, next) {
   userHelpers.doLogin(req.body).then((response)=>{
-     console.log(response.status)
-     if(response.status){
-      req.session.loggedIn=true;
+     if(response.blockStatus&&response.passStatus&&response.emailStatus){
       req.session.user=response.user;
       res.redirect('/')
      }
      else{
-      req.session.loginErr=true;
+      req.session.loginErr=response;
       res.redirect('/login')
 
      }
@@ -63,8 +65,8 @@ router.get('/registration', function(req, res, next) {
 router.post('/signup', function(req, res, next) {
   userHelpers.doSignup(req.body).then((response)=>{
   })
-  res.render('user/registration')
-})
+  res.redirect('/')
+}) 
 
 
 router.get('/logout', function(req, res, next) {
@@ -72,6 +74,6 @@ router.get('/logout', function(req, res, next) {
   res.redirect('/')
 })
 
-
+// ===================product details=====================
 
 module.exports = router;

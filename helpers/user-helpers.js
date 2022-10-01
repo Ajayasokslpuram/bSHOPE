@@ -20,31 +20,31 @@ module.exports={
             if(user){
                 bcrypt,bcrypt.compare(userData.password,user.password).then((status)=>{
                     if(status){
-                        if(user.isBlocked==false){
-                            console.log("Login Success")
                         response.user=user;
-                        response.Emailstatus=true;
-                        response.Passstatus=true;
-                        response.Blockstatus=true;
+                        response.emailStatus=true;
+                        response.passStatus=true;
+                        if(user.isBlocked==false){
+                        console.log("Login Success")
+                        response.blockStatus=true;
                         resolve(response)
                         }
                         else{
-                        response.Emailstatus=true;
-                        response.Passstatus=true;
-                        response.Blockstatus=false;
+                        response.blockStatus=false;
                         resolve(response)
                         }
                     }
                     else{
                         console.log("Password not matched")
-                        resolve({status:false})
+                        response.passStatus=false;
+                        resolve(response)
+                        
                     }
                 })
             }
             else
-            {
+            {   response.emailStatus=false;
                 console.log('User not matched')
-                resolve({status:false})
+                resolve(response)
             }
         })
     }

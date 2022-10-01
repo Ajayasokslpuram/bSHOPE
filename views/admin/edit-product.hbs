@@ -1,6 +1,5 @@
-<div class="col-lg-9 p-5 ml-5 mt-5 mb-5">
-    <h4 class="ml-5" style="color: #ff8000ec;">Edit Product</h4>
-    <h4 class="ml-5 mb-5" style="color: #ff6600;"></h4>
+<div class="mx-auto col-lg-9 mt-5 mb-5">
+    <h4 class="mx-0 mb-5" style="color: #ff6600;">Edit Products</h4>
 					<form class="ml-5 row contact_form" enctype="multipart/form-data" action="/admin/update-product/{{product._id}}" method="post" id="contactForm" novalidate="novalidate">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -20,18 +19,35 @@
 						</div>
                          <div class="quantity-container d-flex align-items-center mt-15 ml-3">
 										<small class="mr-2">Quantity:</small>
-										<input type="text" name="quantity" class="quantity-amount ml-15" value="{{this.value}}" />
+										<input type="text" name="quantity" class="quantity-amount ml-15" value="{{product.quantity}}" />
 										<div class="arrow-btn d-inline-flex flex-column">
 											<button class="increase arrow" type="button" title="Increase Quantity"><span class="lnr lnr-chevron-up"></span></button>
 											<button class="decrease arrow" type="button" title="Decrease Quantity"><span class="lnr lnr-chevron-down"></span></button>
 										</div>
                         </div>
                         
-                        <label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image</small> </label>
-						<img src="/product-images/{{product._id}}.jpg" style="width: 10%; height: 10%px" class="ml-2" id="imgUpdate">
-                        <input name="image" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:25%;" onchange="viewImage(event)"/>
+
+						<div class="col-md-4 mt-3">
+						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 1</small> </label>
+						<img src="/product-images/{{product._id}}.jpg" style="width: 40%; height: auto" class="ml-2" id="imgUpdate">
+                        <input name="image" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:100%;" onchange="viewImage(event)"/>
+						</div>
+						<div class="col-md-4 mt-3">
+						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 2</small> </label>
+						<img src="/product-images/{{product._id}}1.jpg" style="width: 40%; height: auto" class="ml-2" id="imgUpdate1">
+                        <input name="image1" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:100%;" onchange="viewImage1(event)"/>
+						</div>
+						<div class="col-md-4 mt-3">
+						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 3</small> </label>
+						<img src="/product-images/{{product._id}}2.jpg" style="width: 40%; height: auto" class="ml-2" id="imgUpdate2">
+                        <input name="image2" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:100%;" onchange="viewImage2(event)"/>
+						</div>
+						
+						
+						
+						
 						<div class="col-md-12 text-right">
-							<button type="submit" value="submit" class="primary-btn">Edit Product</button>
+							<button type="submit" value="submit" class="primary-btn">proceed to Edit</button>
 						</div>
 
                        
@@ -41,5 +57,11 @@
 				<script>
 					function viewImage(event){
 						document.getElementById('imgUpdate').src=URL.createObjectURL(event.target.files[0])
+					}
+					function viewImage1(event){
+						document.getElementById('imgUpdate1').src=URL.createObjectURL(event.target.files[0])
+					}
+					function viewImage2(event){
+						document.getElementById('imgUpdate2').src=URL.createObjectURL(event.target.files[0])
 					}
 				</script>

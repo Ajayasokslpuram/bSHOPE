@@ -18,12 +18,11 @@
 						{{#if loginErr}}
 						<h6 style="color:red;">Invalid Credentials!</h6>
 						{{/if}}
-						<h6 id="err" style="color:red;"></h6>
 
      {{!-- =====================================L O G I N   F O R M ============================== --}}
 
 
-						<form class="row login_form" action="/signin" method="post" id="contactForm" novalidate="novalidate">
+						<form class="row login_form" action="/admin/adminsignin" method="post" id="contactForm" novalidate="novalidate">
 							<div class="col-md-12 form-group">
 								<input type="text" class="form-control" id="name" name="email" placeholder="Username" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
 							</div>

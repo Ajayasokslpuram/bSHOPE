@@ -15,6 +15,8 @@
 				<div class="col-lg-6">
 					<div class="login_form_inner">
 						<h3>Sign Up</h3>
+						<h6 id="err" style="color:red;"></h6>
+
 						<form class="row login_form" action="/signup" method="post" id="contactForm" novalidate="novalidate">
 							
 
@@ -27,10 +29,11 @@
 								<input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Your Email'">
 							</div>
 							<div class="form-group">
-								<input type="password" class="form-control" id="subject" name="password" placeholder="Enter a Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter a Password'">
+								<input type="password" class="form-control" id="password" name="C" placeholder="Enter a Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter a Password'">
 							</div>
                             <div class="form-group">
-								<input type="password" class="form-control" id="subject" name="repassword" placeholder="Confirm Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">
+								<small id="passerr" style="color:red;"></small>
+								<input type="password" class="form-control" id="rePassword" name="repassword" placeholder="Confirm Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">
 							</div>
 						</div>
 
@@ -48,6 +51,44 @@
 	<!--================End Login Box Area =================-->
 
 
+<script>
+	const form=document.getElementById('contactForm')
+	const name=document.getElementById('name')
+	const email=document.getElementById('email')
+	const password=document.getElementById('password')
+	const rePassword=document.getElementById('rePassword')
+	const err=document.getElementById('err')
+	const passerr=document.getElementById('passerr')
+
+
+	form.addEventListener('submit',(e)=>{
+		let messages=[]
+		let nameWarning=[]
+		let emailWarning=[]
+		let passwordWarning=[]
+		let rePasswordWarning=[]
+
+		if(name.value==='' || email.value==="" || password.value==='' || rePassword.value===''){
+			messages.push('All fields Required!')
+		}
+		else if(name.value<4){
+			nameWarning.push('Name must be 4 characters')
+		}
+		 else if(email.value<4){
+			emailWarning.push('Name must be 4 characters')
+		}
+		else if(password.value!==rePassword.value){
+			passwordWarning.push('Password not matched')
+		}
+		if(messages.length>0||nameWarning.length>0||emailWarning.length>0||passwordWarning.length>0){
+			e.preventDefault()
+			passerr.innerText=passwordWarning.join(',')
+			err.innerText=messages.join(',')
+		
+		}
+	
+	})
+</script>
 
 
 

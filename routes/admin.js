@@ -4,8 +4,30 @@ var router = express.Router();
 var productHelpers=require('../helpers/product-helpers')
 
 /* GET users listing. */
+
 router.get('/', function(req, res, next) {
-  res.render('admin/admin-dashboard')
+  res.render('admin/admin-dashboard',{admin:true})
+});
+module.exports = router;
+
+router.get('/login', function(req, res, next) {
+  res.render('admin/admin-login',{admin:true,'loginErr':req.session.loginErr})
+  req.session.loginErr=null
+});
+module.exports = router;
+
+router.post('/adminsignin', function(req, res, next) {
+  console.log(req.body.email)
+  const adminID="admin";
+  const adminPass="admin";
+  if(req.body.email==adminID&&req.body.password==adminPass){
+    res.redirect('/admin')
+  }
+  else{
+    req.session.loginErr=true;
+    res.redirect('/admin/login')
+  }
+
 });
 module.exports = router;
 
@@ -17,7 +39,7 @@ router.get('/viewproducts', function(req, res, next) {
 });
 module.exports = router;
 router.get('/addproducts', function(req, res, next) {
-  res.render('admin/add-products')
+  res.render('admin/add-products',{admin:true})
 });
 
 router.post('/addproducts', function(req, res, next) {
@@ -26,9 +48,13 @@ router.post('/addproducts', function(req, res, next) {
   productHelpers.addProduct(req.body,(id)=>{
       console.log(id)
       let image=req.files.image
-        image.mv('./public/product-images/'+id+'.jpg',(err,done)=>{
+      let image1=req.files.image1
+      let image2=req.files.image2
+      image.mv('./public/product-images/'+id+'.jpg')
+      image1.mv('./public/product-images/'+id+'1.jpg')
+      image2.mv('./public/product-images/'+id+'2.jpg',(err,done)=>{
           if(!err){
-            res.render('admin/add-products')
+            res.render('admin/add-products',{admin:true})
           }
           else console.log(err)
         })
@@ -55,10 +81,18 @@ router.get('/edit-product/:id', function(req, res, next) {
 
 router.post('/update-product/:id', function(req, res, next) {
   productHelpers.updateProduct(req.params.id,req.body).then(()=>{
-    res.redirect('/admin/viewproducts')
-    if(req.files.image){
+    if(req.files){
       let image=req.files.image
+      let image1=req.files.image1
+      let image2=req.files.image2
       image.mv('./public/product-images/'+req.params.id+'.jpg')
+      image1.mv('./public/product-images/'+req.params.id+'1.jpg')
+      image2.mv('./public/product-images/'+req.params.id+'2.jpg',(err,done)=>{
+          if(!err){
+            res.redirect('/admin/viewproducts')
+          }
+          else console.log(err)
+        })
     }
   })
 });
