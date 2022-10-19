@@ -1,0 +1,118 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">All Orders ></h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Tables</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Basic tables </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+
+
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Order Details</th>
+                                        <th></th>
+                                        <th>Address</th>
+                                        <th></th>
+                                        <th>Current tatus</th>
+                                        <th>Update Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each orders}}
+                                    <tr>
+                                        <td class="py-1">
+                                            <p>Placed At: <br> {{this.date}}</p><br>
+                                            <p>Amount: <br>$ {{this.productsNetAmount}}</p>
+                                            <p>Payment Method: <br>{{this.paymentMethod}}</p>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <p>{{this.deliveryDetails.address}}</p>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <p id="{{this._id}}">{{this.status}}</p>
+                                        </td>
+                                        <td>
+                                            <div class="mt-3  col-md-4 col-xs-5">
+
+                                                <select class="mb-5" onchange="fetchStatus(this.value,'{{this._id}}')"
+                                                    name="orderStatus">
+                                                    <option value="" disabled selected>{{this.status}}</option>
+                                                    <option value="Placed">Placed</option>
+                                                    <option value="Shipped">Shipped</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    <option value="Canceled">Canceled</option>
+
+                                                </select>
+                                        </td>
+
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+
+
+
+
+        /* function fetchStatus(status, id) {
+        $.ajax({
+        type: 'post',
+        url: '/admin/change-order-status',
+        data: {
+        newStatus: status,
+        orderID=id
+
+        },
+        success: function (data) {
+        location.reload()
+        }
+        })
+        console.log(status, id)
+        } */
+
+
+
+        function fetchStatus(status, id) {
+            let statusElement = document.getElementById(id)
+            $.ajax({
+                url: '/admin/change-order-status',
+                method: 'post',
+                data: {
+                    newStatus: status,
+                    orderID: id,
+                },
+                success: (result) => {
+                    statusElement.innerHTML = status
+                }
+
+            })
+
+
+        }
+
+
+    </script>

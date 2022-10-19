@@ -4,9 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session= require('express-session')
+var flash=require('connect-flash')
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
+var handlebars=require('handlebars');
 
 var hbs=require('express-handlebars')
 
@@ -15,6 +17,9 @@ var app = express();
 var fileUpload=require('express-fileupload')
 
 var db=require('./config/connection')
+
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,6 +31,13 @@ app.engine('hbs',hbs.engine({
   partialsDir:__dirname+'/views/partials/'
 }))
 
+
+// handlebars index increment
+handlebars.registerHelper("inc", function(value, options)
+{
+    return parseInt(value) + 1;
+});
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,7 +45,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(fileUpload())
-app.use(session({secret:"Key",cookie:{maxAge:600000}}))
+app.use(session({
+  secret:"Key",
+  cookie:{maxAge:600000}
+}));
+app.use(flash());
 
 db.connect((err)=>{
   if(err) console.log("DB connection ERROR")

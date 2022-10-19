@@ -1,0 +1,47 @@
+<div class="col-lg-9 p-5">
+					<form class="row contact_form" enctype="multipart/form-data" action="/admin/addproducts" method="post" id="contactForm" novalidate="novalidate">
+						<div class="col-md-6">
+							<div class="form-group">
+								<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Item name'">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<textarea class="form-control" name="description" id="message" rows="1" placeholder="Description" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Description'"></textarea>
+							</div>
+						</div>
+
+					<div class="d-flex row">
+						<div class="col-md-6">
+							<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
+                        <input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
+						
+						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Second Image</small> </label>
+                        <input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
+						
+						
+						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Third Image</small> </label>
+                        <input name="image2" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
+
+						</div>
+                        
+                        
+						
+						<div class="ml-2 mt-5 col-md-4 col-xs-5">
+							<select name="category" >
+							<option value="" disabled selected>Choose Category</option>
+							{{#each categories}}
+							<option  value="{{this.name}}">{{this.name}}</option>
+							{{/each}}
+							</select>
+						</div>
+						
+					</div>
+						
+						<div class="col-md-12 text-right">
+							<button type="submit" value="submit" class="primary-btn">Add Banner</button>
+						</div>
+
+
+					</form>
+				</div>

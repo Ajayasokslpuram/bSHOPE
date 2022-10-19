@@ -1,0 +1,275 @@
+<style>
+    .track-line {
+        height: 2px !important;
+        background-color: #488978;
+        opacity: 1;
+    }
+
+    .track-line-red {
+        height: 2px !important;
+        background-color: #895548;
+        opacity: 1;
+    }
+    .track-line-grey {
+        height: 2px !important;
+        background-color: #8d8d8d;
+        opacity: 1;
+    }
+
+    .dot {
+        height: 10px;
+        width: 10px;
+        margin-left: 3px;
+        margin-right: 3px;
+        margin-top: 0px;
+        background-color: #488978;
+        border-radius: 50%;
+        display: inline-block
+    }
+
+    .white-dot {
+        height: 10px;
+        width: 10px;
+        margin-left: 3px;
+        margin-right: 3px;
+        margin-top: 0px;
+        background-color: #8d8d8d;
+        border-radius: 50%;
+        display: inline-block
+    }
+    .red-dot {
+        height: 10px;
+        width: 10px;
+        margin-left: 3px;
+        margin-right: 3px;
+        margin-top: 0px;
+        background-color: #895548;
+        border-radius: 50%;
+        display: inline-block
+    }
+
+    .big-dot {
+        height: 25px;
+        width: 25px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        background-color: #488978;
+        border-radius: 50%;
+        display: inline-block;
+    }
+     .big-dot-red {
+        height: 25px;
+        width: 25px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        background-color: #895548;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .big-dot i {
+        font-size: 12px;
+    }
+
+    .card-stepper {
+        z-index: 0
+    }
+</style>
+<div class="container">
+    <section class="h-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-10 col-xl-8">
+                    <div class="card" style="border-radius: 10px;">
+                        <div class="card-header px-4 py-5">
+                            <h5 class="text-muted mb-0">Thanks for your Order, <span
+                                    style="color: #a8729a;">{{user.name}}</span>!</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <p class="lead fw-normal mb-0" style="color: #a8729a;">Receipt</p>
+                                <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p>
+                            </div>
+
+
+
+                            {{#each orderProducts}}
+
+                            <div class="card shadow-0 border mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="/product-images/{{this.product._id}}.jpg" class="img-fluid"
+                                                alt="Phone">
+                                        </div>
+                                        <div
+                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0">{{this.product.name}}</p>
+                                        </div>
+                                        <div
+                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">{{this.product.category}}</p>
+                                        </div>
+                                        <div
+                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Dummy Data</p>
+                                        </div>
+                                        <div
+                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Qty: {{this.quantity}}</p>
+                                        </div>
+                                        <div
+                                            class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">${{this.product.price}}</p>
+                                        </div>
+                                    </div>
+                                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="col-md-2">
+                                            <p class="text-muted mb-0 small">Track Order</p>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div
+                                                class="d-flex flex-row justify-content-between align-items-center align-content-center">
+
+                                                {{#if ../Placed}}
+                                                <p>placed</p>
+                                                <span class="dot"></span>
+                                                <hr class="flex-fill track-line"><span class="white-dot"></span>
+                                                <hr class="flex-fill track-line-grey"><span class="white-dot"></span>
+                                                <hr class="flex-fill track-line-grey"><span class="white-dot"></span>
+                                                <hr class="flex-fill track-line-grey"><span class="white-dot"></span>
+                                            </div>
+
+                                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                                <div class="d-flex flex-column align-items-start"><span>15
+                                                        Mar</span><span>Order placed</span>
+                                                </div>
+
+                                                {{/if}}
+
+                                                {{#if ../Shipped}}
+
+                                                <span
+                                                    class="d-flex justify-content-center align-items-center big-dot dot"><i
+                                                        class="fa fa-check text-white"></i></span>
+                                                <hr class="flex-fill track-line"><span class="dot"></span>
+                                                <hr class="flex-fill track-line"><span
+                                                    class="d-flex justify-content-center align-items-center big-dot dot"><i
+                                                        class="fa fa-check text-white"></i></span>
+                                                <hr class="flex-fill track-line-grey"><span class="white-dot"></span>
+                                                <hr class="flex-fill track-line-grey"><span class="white-dot"></span>
+                                            </div>
+
+                                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                                <div class="d-flex flex-column align-items-start"><span>15
+                                                        Mar</span><span>Order placed</span>
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <span></span><span>
+                                                    </span></div>
+                                                <div
+                                                    class="d-flex flex-column justify-content-center align-items-center mx-5">
+                                                    <span>
+                                                    </span><span>Order Shipped</span></div>
+                                                <div class="d-flex flex-column align-items-center"><span></span><span>
+                                                    </span></div>
+                                                <div class="d-flex flex-column align-items-end">
+                                                    <span></span><span></span></div>
+                                            </div>
+
+
+
+                                            {{/if}}
+
+                                            {{#if ../Delivered}}
+
+                                            <span
+                                                class="d-flex justify-content-center align-items-center big-dot dot"><i
+                                                    class="fa fa-check text-white"></i></span>
+                                            <hr class="flex-fill track-line"><span class="dot"></i></span>
+                                            <hr class="flex-fill track-line"><span
+                                                class="d-flex justify-content-center align-items-center big-dot dot"><i
+                                                    class="fa fa-check text-white"></i></span>
+                                            <hr class="flex-fill track-line"><span class="dot"></span>
+                                            <hr class="flex-fill track-line"><span
+                                                class="d-flex justify-content-center align-items-center big-dot dot">
+                                                <i class="fa fa-check text-white"></i></span>
+                                        </div>
+
+                                        <div class="d-flex flex-row justify-content-between align-items-center">
+                                            <div class="d-flex flex-column align-items-start"><span>15
+                                                    Mar</span><span>Order placed</span>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <span></span><span></span></div>
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <span>
+                                                </span><span>Order Dispatched</span></div>
+                                            <div class="d-flex flex-column align-items-center"><span></span><span>
+                                                </span></div>
+                                            <div class="d-flex flex-column align-items-end">
+                                                <span></span><span>Delivered</span></div>
+                                        </div>
+
+                                        {{/if}}
+
+
+
+                                        {{#if ../Canceled}}
+
+                               
+                                                <span class="dot"></span>
+                                                <hr class="flex-fill track-line"><span
+                                                    class="d-flex justify-content-center align-items-center big-dot-red red-dot"><i
+                                                        class="fa fa-exclamation text-white"></i></span>
+                                                <hr class="flex-fill track-line-red"><span class="red-dot"></span>
+                                                <hr class="flex-fill track-line-red"><span class="red-dot"></span>
+                                                <hr class="flex-fill track-line-red"><span class="red-dot"></span>
+                                            </div>
+
+                                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                                <div class="d-flex flex-column align-items-start"><span>15
+                                                        Mar</span><span>Order Canceled</span>
+                                                </div>
+
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+
+                    <div class="d-flex justify-content-between pt-2">
+                        <p class="fw-bold mb-0">Order Details</p>
+                        <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> $898.00</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-2">
+                        <p class="text-muted mb-0">Invoice Number : 788152</p>
+                        <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> $19.00</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <p class="text-muted mb-0">Invoice Date : 22 Dec,2019</p>
+                        <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-5">
+                        <p class="text-muted mb-0">Recepits Voucher : 18KU-62IIK</p>
+                        <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+                    </div>
+                </div>
+                <div class="card-footer border-0 px-4 py-5"
+                    style="background-color: #a8729a; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                    <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+                        paid: <span class="h2 mb-0 ms-2">$1040</span></h5>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+</section>
+</div>

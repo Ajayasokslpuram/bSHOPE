@@ -15,20 +15,20 @@
 		</div>
 	</section>
 	<!-- End Banner Area -->
-
+        
 	<!--================Single Product Area =================-->
 	<div class="product_image_area">
 		<div class="container">
 			<div class="row s_product_inner">
 				<div class="col-lg-6">
 					<div class="s_Product_carousel">
-						<div class="single-prd-item">
-							<img class="img-fluid" src="/product-images/{{product._id}}.jpg" alt="">
+						<div id="container1" class="single-prd-item">
+							<img  class="img-fluid" src="/product-images/{{product._id}}.jpg" alt="">
 						</div>
-						<div class="single-prd-item">
-							<img class="img-fluid" src="/product-images/{{product._id}}1.jpg" alt="">
+						<div id="container2" class="single-prd-item">
+							<img  class="img-fluid" src="/product-images/{{product._id}}1.jpg" alt="">
 						</div>
-						<div class="single-prd-item">
+						<div id="container3" class="single-prd-item">
 							<img class="img-fluid" src="/product-images/{{product._id}}2.jpg" alt="">
 						</div>
 					</div>
@@ -523,3 +523,21 @@
             </div>
         </section>
         <!-- End related-product Area -->
+
+        <script>
+            const container=document.getElementById('container1')
+            const img=document.querySelector('img');
+        
+            container.addEventListener("mousemove",(e)=>{
+                const x= e.clientX -e.target.offsetLeft;
+                const y= e.clientX -e.target.offsetTop;
+                console.log(x,y)
+                img.style.transformOrigin=`${x}px ${y}px`;
+                img.style.transform="scale(2)"
+            })
+            container.addEventListener("mouseleave",()=>{
+                img.style.transformOrigin='center';
+                img.style.transform='scale(1)'
+            })
+
+        </script>

@@ -5,9 +5,6 @@
 								<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'">
 							</div>
 							<div class="form-group">
-								<input type="email" class="form-control" id="email" name="category" placeholder="Category" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'">
-							</div>
-							<div class="form-group">
 								<input type="text" class="form-control" id="subject" name="price" placeholder="Price" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'">
 							</div>
 						</div>
@@ -24,24 +21,39 @@
 											<button class="decrease arrow" type="button" title="Decrease Quantity"><span class="lnr lnr-chevron-down"></span></button>
 										</div>
                         </div>
-                        
-                        <label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
-                        <input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  style="width:25%;"/>
+
+
+					<div class="d-flex row">
+						<div class="col-md-6">
+							<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
+                        <input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
 						
 						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Second Image</small> </label>
-                        <input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  style="width:25%;"/>
+                        <input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
 						
 						
 						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Third Image</small> </label>
-                        <input name="image2" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  style="width:25%;"/>
+                        <input name="image2" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
+
+						</div>
+                        
+                        
 						
+						<div class="ml-2 mt-5 col-md-4 col-xs-5">
+							<select name="category" >
+							<option value="" disabled selected>Choose Category</option>
+							{{#each categories}}
+							<option  value="{{this.name}}">{{this.name}}</option>
+							{{/each}}
+							</select>
+						</div>
 						
+					</div>
 						
 						<div class="col-md-12 text-right">
 							<button type="submit" value="submit" class="primary-btn">Add Product</button>
 						</div>
 
-                       
 
 					</form>
 				</div>

@@ -1,3 +1,4 @@
+const { request } = require('express');
 var express = require('express');
 const { response } = require('../app');
 var router = express.Router();
@@ -6,15 +7,15 @@ var productHelpers=require('../helpers/product-helpers')
 /* GET users listing. */
 
 router.get('/', function(req, res, next) {
-  res.render('admin/admin-dashboard',{admin:true})
+  res.render('admin/sample-dash',{title:'Admin Page',layout:'adminLayout'})
 });
-module.exports = router;
+
 
 router.get('/login', function(req, res, next) {
   res.render('admin/admin-login',{admin:true,'loginErr':req.session.loginErr})
   req.session.loginErr=null
 });
-module.exports = router;
+
 
 router.post('/adminsignin', function(req, res, next) {
   console.log(req.body.email)
@@ -29,22 +30,26 @@ router.post('/adminsignin', function(req, res, next) {
   }
 
 });
-module.exports = router;
 
 router.get('/viewproducts', function(req, res, next) {
   productHelpers.getAllProducts().then((products)=>{
-    console.log(products)
     res.render('admin/view-products',{admin:true,products})
   })
 });
-module.exports = router;
+
 router.get('/addproducts', function(req, res, next) {
-  res.render('admin/add-products',{admin:true})
+  productHelpers.getAllCategories().then((categories)=>{
+    res.render('admin/add-products',{admin:true,categories})
+  })
+ 
 });
 
 router.post('/addproducts', function(req, res, next) {
+  req.body.price=parseInt(req.body.price)
   // console.log(req.body)
   // console.log( (req.files.image) );
+  console.log(req.body)
+  
   productHelpers.addProduct(req.body,(id)=>{
       console.log(id)
       let image=req.files.image
@@ -54,7 +59,7 @@ router.post('/addproducts', function(req, res, next) {
       image1.mv('./public/product-images/'+id+'1.jpg')
       image2.mv('./public/product-images/'+id+'2.jpg',(err,done)=>{
           if(!err){
-            res.render('admin/add-products',{admin:true})
+            res.redirect('/admin/addproducts')
           }
           else console.log(err)
         })
@@ -74,12 +79,15 @@ router.get('/delete-product/:id', function(req, res, next) {
 router.get('/edit-product/:id', function(req, res, next) {
  
     productHelpers.getProductDetails(req.params.id).then((product)=>{
-      console.log(product)
-      res.render('admin/edit-product',{admin:true,product})
+      productHelpers.getAllCategories().then((categories)=>{
+        res.render('admin/edit-product',{admin:true,product,categories})
+      })
+      
     })
 });
 
 router.post('/update-product/:id', function(req, res, next) {
+  req.body.price=parseInt(req.body.price)
   productHelpers.updateProduct(req.params.id,req.body).then(()=>{
     if(req.files){
       let image=req.files.image
@@ -102,7 +110,7 @@ router.post('/update-product/:id', function(req, res, next) {
 router.get('/viewusers', function(req, res, next) {
   productHelpers.getAllUsers().then((users)=>{
     console.log(users)
-    res.render('admin/view-users',{admin:true,users})
+    res.render('admin/view-users2',{layout:'adminLayout',admin:true,users})
   })
 });
 
@@ -121,5 +129,110 @@ router.get('/unblockuser/:id', function(req, res, next) {
 
 })
 
+
+
+/*--------------------- CATEGORIES ----------------------------*/
+
+
+router.get('/categories', function(req, res, next) {
+  productHelpers.getAllCategories().then((categories)=>{
+    res.render('admin/categories',{admin:true,categories,errMessage:req.flash('deleteStatusFalse'),succMessage:req.flash('deleteStatusTrue')})
+  }) 
+
+})
+
+router.post('/add-category', function(req, res, next) {
+ 
+  productHelpers.addCategory(req.body,(id)=>{
+      console.log(id)
+            res.redirect('/admin/categories')
+});
+})
+
+
+router.get('/delete-category/:id', function(req, res, next) {
+
+  let categoryId=req.params.id
+  productHelpers.deleteCategory(categoryId).then((response)=>{
+    console.log(response)
+    if(response.DeleteStatus){
+      req.flash('deleteStatusTrue',`Sussessfully Deleted ${response.category} !`)
+      res.redirect('/admin/categories')
+    }
+    else{
+      req.flash('deleteStatusFalse',`Cannot Delete ${response.category} since it has ${response.products.length} products!`)
+      res.redirect('/admin/categories')
+
+    }
+  })
+});
+
+router.get('/edit-category/:id', function(req, res, next) {
+ 
+  productHelpers.getCategoryDetails(req.params.id).then((category)=>{
+
+      res.render('admin/edit-category',{admin:true,category})
+    
+  })
+});
+
+router.post('/update-category/:id', function(req, res, next) {
+  productHelpers.updateCategory(req.params.id,req.body).then(()=>{
+  
+            res.redirect('/admin/categories')
+  })
+});
+
+
+// ========================== BANNERS =========================
+
+router.get('/banners', function(req, res, next) {
+  productHelpers.getAllCategories().then((categories)=>{
+    res.render('admin/banners',{admin:true,categories})
+  
+  })
+});
+
+
+
+router.post('/addbanner', function(req, res, next) {
+  // console.log(req.body)
+  // console.log( (req.files.image) );
+  console.log(req.body)
+  
+  productHelpers.addBanner(req.body,(id)=>{
+      console.log(id)
+      let image=req.files.image
+      let image1=req.files.image1
+      let image2=req.files.image2
+      image.mv('./public/banner-images/'+id+'.jpg')
+      image1.mv('./public/banner-images/'+id+'1.jpg')
+      image2.mv('./public/banner-images/'+id+'2.jpg',(err,done)=>{
+          if(!err){
+            res.redirect('/admin/banners')
+          }
+          else console.log(err)
+        })
+  })
+  // res.render('admin/add-products')
+});
+
+
+router.get("/order-table", async (req, res, next) => {
+  let orders = await productHelpers.getAllOrders().then((orders)=>{
+    res.render('admin/order-table', {layout:'adminLayout',orders})
+  })
+
+  
+})
+
+router.post("/change-order-status", async (req, res, next) => {
+  console.log('api called')
+  productHelpers.changeOrderStatus(req.body.newStatus,req.body.orderID).then(()=>{
+    res.json({changeStatus:true})
+  })
+ console.log(req.body.newStatus,req.body.orderID)
+  
+})
 
 module.exports = router;

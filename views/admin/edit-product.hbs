@@ -1,25 +1,39 @@
 <div class="mx-auto col-lg-9 mt-5 mb-5">
     <h4 class="mx-0 mb-5" style="color: #ff6600;">Edit Products</h4>
+	<p class="mx-0 mb-5" id="err" style="color: #ff0000;"></p>
 					<form class="ml-5 row contact_form" enctype="multipart/form-data" action="/admin/update-product/{{product._id}}" method="post" id="contactForm" novalidate="novalidate">
 						<div class="col-md-6">
 							<div class="form-group">
+								<label for="formFileLg" class="form-label mt-2">Product Name</label>
 								<input type="text" class="form-control" id="name" name="name" value="{{product.name}}">
 							</div>
+
+							<div class="mt-3  col-md-4 col-xs-5">
+							<label for="formFileLg" class="form-label mt-2">Category</label>
+							<select class="mb-5" name="category" >
+							<option value="" disabled selected>{{product.category}}</option>
+							{{#each categories}}
+							<option  value="{{this.name}}">{{this.name}}</option>
+							{{/each}}
+							</select>
+							
+
+
+						</div>
+						
 							<div class="form-group">
-								<input type="text" class="form-control" id="email" name="category" value="{{product.category}}">
-							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" id="subject" name="price" value="{{product.price}}">
+								<input type="text" class="form-control" id="price" name="price" value="{{product.price}}" style="width:auto;">
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<textarea class="form-control" name="description" id="message" rows="1" placeholder="{{product.description}}"></textarea>
+								<label for="formFileLg" class="form-label mt-2">Description</label>
+								<textarea class="form-control" name="description" id="description" rows="1" placeholder="{{product.description}}"></textarea>
 							</div>
 						</div>
                          <div class="quantity-container d-flex align-items-center mt-15 ml-3">
 										<small class="mr-2">Quantity:</small>
-										<input type="text" name="quantity" class="quantity-amount ml-15" value="{{product.quantity}}" />
+										<input type="text" name="quantity" id="quantity" class="quantity-amount ml-15" value="{{product.quantity}}" />
 										<div class="arrow-btn d-inline-flex flex-column">
 											<button class="increase arrow" type="button" title="Increase Quantity"><span class="lnr lnr-chevron-up"></span></button>
 											<button class="decrease arrow" type="button" title="Decrease Quantity"><span class="lnr lnr-chevron-down"></span></button>
@@ -30,12 +44,12 @@
 						<div class="col-md-4 mt-3">
 						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 1</small> </label>
 						<img src="/product-images/{{product._id}}.jpg" style="width: 40%; height: auto" class="ml-2" id="imgUpdate">
-                        <input name="image" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:100%;" onchange="viewImage(event)"/>
+                        <input name="image" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg1" type="file" accept=".jpg" style="width:100%;" onchange="viewImage(event)"/>
 						</div>
 						<div class="col-md-4 mt-3">
 						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 2</small> </label>
 						<img src="/product-images/{{product._id}}1.jpg" style="width: 40%; height: auto" class="ml-2" id="imgUpdate1">
-                        <input name="image1" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg" type="file"  style="width:100%;" onchange="viewImage1(event)"/>
+                        <input name="image1" class="form-control form-control-lg  ml-3 mt-3 " id="formFileLg2" type="file"  style="width:100%;" onchange="viewImage1(event)"/>
 						</div>
 						<div class="col-md-4 mt-3">
 						<label for="formFileLg" class="form-label  ml-2 mt-2"><small>Select Image 3</small> </label>
@@ -55,13 +69,52 @@
 					</form>
 				</div>
 				<script>
+					imgFlag=[] // ====== For Validating The Image Input=========
 					function viewImage(event){
 						document.getElementById('imgUpdate').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
 					}
 					function viewImage1(event){
 						document.getElementById('imgUpdate1').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
 					}
 					function viewImage2(event){
 						document.getElementById('imgUpdate2').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
 					}
-				</script>
+					console.log(imgFlag)
+
+
+//============================================ F O R M    V A L I D A T I O N ===================================
+
+
+
+	const form=document.getElementById('contactForm')
+	const name=document.getElementById('name')
+	const category=document.getElementById('category')
+	const price=document.getElementById('price')
+	const description=document.getElementById('description')
+	const quantity=document.getElementById('quantity')
+	
+	const err=document.getElementById('err')
+
+	form.addEventListener('submit',(e)=>{
+		let messages=[]
+		if(name.value==='' || category.value==="" || price.value==='' || description.value==='' || quantity.value===''||imgFlag.length<3){
+			messages.push('All fields Required!')
+		}
+		
+		if(messages.length>0){
+			e.preventDefault()
+			err.innerText=messages.join(',')
+		
+		}
+	
+	})
+
+	</script>
+
+
+
+
+			

@@ -1,0 +1,304 @@
+<!--================Checkout Area =================-->
+<section class="checkout_area section_gap">
+    <div class="container">
+        <div class="billing_details">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h3>Billing Details</h3>
+                     <form class="row contact_form mt-5" id="checkoutForm" action="#" method="post" novalidate="novalidate">
+                    <div class="accordion mt-5" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button " type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#collapseThree" aria-expanded="false"
+                                    aria-controls="collapseThree">
+                                    <h6>Saved Address</h6>
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse " aria-labelledby="headingThree"
+                                data-mdb-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card-body p-0">
+                                        <div class="col-sm-12">
+
+                                            {{#each address}}
+                                          
+                                            <div class="col-md-12">
+                                                
+                                                <div class="card-body">
+                                                    <h6><input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                    value="{{this.key}}" id="flexRadioDefault1" checked/>Address {{inc @index}}</h6>
+                                                    <hr class="mt-0 mb-4">
+                                                    <div class="row">
+                                                        <div class="col-2 mb-3">
+                                                            <p>Name:</p>
+                                                            <p>Email:</p>
+                                                        </div>
+                                                        <div class="col-4 mb-3">
+                                                            <p class="text-muted">{{this.name}} {{this.lname}}</p>
+                                                            <p class="text-muted">{{this.email}}</p>
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <p>.</p>
+                                                            <p>Mobile:</p>
+
+                                                        </div>
+                                                        <div class="col-4 mb-3">
+                                                            <p class="text-muted">.</p>
+                                                            <p class="text-muted">{{this.mobile}}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row">
+
+                                                        <div class="col-2 mb-3">
+                                                            <p>Address:</p>
+                                                            
+                                                        </div>
+                                                        <div class="col-4 mb-3">
+                                                            <p class="text-muted">{{this.address1}},{{this.address2}}</p>
+                                                            
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <p>Town:</p>
+                                                            <p>zip:</p>
+
+                                                        </div>
+                                                        <div class="col-4 mb-3">
+                                                            <p class="text-muted">{{this.town}}</p>
+                                                           <p class="text-muted">{{this.zip}}</p>
+                                                        </div>
+                                                        
+
+                                                    </div>
+                                                    <hr class="mt-0 mb-4">
+
+                                                </div>
+                                            </div>
+
+                                            {{/each}}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="accordion mt-5" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <h6>Deliver to new Address?</h6>
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                data-mdb-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card-body p-0">
+                                        <div class="col-sm-12">
+
+                                           
+                                                <div class="col-md-6 form-group p_star">
+                                                    <input type="text" class="form-control" placeholder="First name"
+                                                        id="first" name="fname">
+                                                </div>
+                                                <div class="col-md-6 form-group p_star">
+                                                    <input type="text" class="form-control" placeholder="Last name"
+                                                        id="last" name="lname">
+                                                </div>
+                                                <div class="col-md-6 form-group p_star">
+                                                    <input type="text" class="form-control" placeholder="Phone number"
+                                                        id="number" name="mobile">
+                                                </div>
+                                                <div class="col-md-6 form-group p_star">
+                                                    <input type="text" class="form-control" placeholder="Email Address"
+                                                        id="email" name="email">
+                                                </div>
+                                                <div class="col-md-12 form-group p_star">
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Address line 01" id="add1" name="address1">
+                                                </div>
+                                                <div class="col-md-12 form-group p_star">
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Address line 02" id="add2" name="address2">
+                                                </div>
+
+                                                <div class="col-md-6 form-group p_star">
+                                                    <input type="text" class="form-control" placeholder="Town/City"
+                                                        id="city" name="town">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <input type="text" class="form-control" id="zip" name="zip"
+                                                        placeholder="Postcode/ZIP">
+                                                </div>
+
+                                                <div class="col-md-6 form-group p_star">
+
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                        value="new" id="flexRadioDefault0" />
+                                                        Proceed With This Address <br> <small>(Also auto saves this address for further orders)</small>
+                                                </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="cupon_area mt-5">
+                        <div class="check_title">
+                            <h2>Have a coupon? <a href="#">Click here to enter your code</a>
+                            </h2>
+                        </div>
+                        <input type="text" name="coupon" placeholder="Enter coupon code">
+                        <a class="tp_btn" href="#">Apply Coupon</a>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="order_box">
+                        <h2>Your Order</h2>
+                        <ul class="list">
+                            <li><a href="#">Product <span>Total</span></a></li>
+                            <li><a href="#">Fresh Blackberry <span class="middle">x 02</span> <span
+                                        class="last">$720.00</span></a></li>
+                            <li><a href="#">Fresh Tomatoes <span class="middle">x 02</span> <span
+                                        class="last">$720.00</span></a></li>
+                            <li><a href="#">Fresh Brocoli <span class="middle">x 02</span> <span
+                                        class="last">$720.00</span></a></li>
+                        </ul>
+                        <ul class="list list_2">
+                            <li><a href="#">Subtotal <span>${{productsNetAmount}}.00</span></a></li>
+                            <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
+                            <li><a href="#">Total <span>$2210.00</span></a></li>
+                        </ul>
+                        <div class="payment_item">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option5" name="selector" value="COD">
+                                <label for="f-option5">Cash On delivery</label>
+                                <div class="check"></div>
+                            </div>
+                            <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
+                                Store Postcode.</p>
+                        </div>
+                        <div class="payment_item active">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option6" name="selector" value="paypal">
+                                <label for="f-option6">Paypal </label>
+                                <img src="../images/img/product/card.jpg" alt="">
+                                <div class="check"></div>
+                            </div>
+                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                account.</p>
+                        </div>
+                        <div class="payment_item">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option7" name="selector" value="razorpay">
+                                <label for="f-option7">RazorPay </label>
+                                <img src="../images/img/product/card.jpg" alt="">
+                                <div class="check"></div>
+                            </div>
+                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                account.</p>
+                        </div>
+                        <div class="creat_account">
+                            <input type="checkbox" id="f-option4" name="checkbox">
+                            <label for="f-option4">I’ve read and accept the </label>
+                            <a href="#">terms & conditions*</a>
+                        </div>
+                        <input type="text" name="userID" value="{{user._id}}" hidden>
+                        <button type="submit" class="primary-btn">Proceed to Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+
+<script>
+
+    $("#checkoutForm").submit((e) => {
+        e.preventDefault()
+        $.ajax({
+            url: '/place-order',
+            method: 'post',
+            data: $('#checkoutForm').serialize(),
+            success: (response) => {
+                if (response.COD_Success) {
+                    location.href = '/order-success'
+                } else {
+                    razorpayPayment(response)
+                    console.log(response)
+                    console.log('function called')
+                }
+            }
+        })
+    })
+
+    function razorpayPayment(order) {
+
+        console.log('function reached')
+        var options = {
+            "key": "rzp_test_lq7gcttbZU8BHG", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "mySHOPE",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+
+
+                verifyPayment(response, order)
+            },
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9999999999"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+
+        };
+
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+    function verifyPayment(payment, order) {
+        console.log('verify function called')
+        $.ajax({
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            },
+            method: 'post',
+            success: (response) => {
+                if (response.Razor_status) {
+                    location.href = '/order-success'
+                }
+            }
+        })
+    }
+</script>

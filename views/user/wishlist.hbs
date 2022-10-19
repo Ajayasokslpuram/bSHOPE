@@ -1,0 +1,70 @@
+<!--================Cart Area =================-->
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">WISH LIST</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    {{#each products}}
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src="/product-images/{{this.product._id}}.jpg" alt="">
+                                    </div>
+                                    <div class="media-body">
+                                        <h6>{{this.product.name}}</h6>
+                                        <p>{{this.product.description}}</p>
+                                        <h5>${{this.product.price}}</h5>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="media-body">
+                                    <h6 class="ml-2 mb-4 text-danger">Stock Left: {{this.product.quantity}}</h6>
+                                    <a href="/add-to-cart/{{this.product._id}}" class="btn btn-primary">Add to cart</a>
+                                </div>
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                <button onclick="deleteFromWishlist('{{this._id}}','{{this.product._id}}')" class="btn btn-danger">Remove from wishlist</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Cart Area =================-->
+
+<script>
+    function deleteFromWishlist(wishlistID,productID){
+    console.log("button clicked")
+     $.ajax({
+       url:'/delete-from-wishlist',
+        data:{
+          wishlist:wishlistID,
+          product:productID,
+        },
+       method:'post',
+        success:(result)=>{
+          if(result.status){
+          location.reload()
+          }
+        }
+       
+    })
+  }
+</script>

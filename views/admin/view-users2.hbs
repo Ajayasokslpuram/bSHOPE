@@ -1,0 +1,72 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">Registered Users</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Tables</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Basic tables </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+
+
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>First name</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each users}}
+                                    <tr>
+                                        <td class="py-1">
+                                            <img src="../../assets/images/faces-clipart/pic-1.png" alt="image" />
+                                        </td>
+                                        <td>{{this.name}}</td>
+                                        <td>{{this.email}}</td>
+                                        <td>{{this.mobile}}</td>
+                                        <td>
+                                            {{#if this.isBlocked}}
+                                            <span class="badge badge-danger rounded-pill d-inline">Blocked</span>
+                                            {{else}}
+                                            <span class="badge badge-success rounded-pill d-inline">Active</span>
+                                            {{/if}}
+                                        </td>
+                                        <td> {{#if this.isBlocked}}
+
+                                            <a type="button" href="/admin/unblockuser/{{this._id}}"
+                                                class="badge badge-success btn btn-sm">
+                                                UNBLOCK
+                                            </a>
+                                            {{else}}
+                                            <a type="button" href="/admin/blockuser/{{this._id}}"
+                                                class="badge badge-danger btn btn-sm ">
+                                                B L O C K
+                                            </a>
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>

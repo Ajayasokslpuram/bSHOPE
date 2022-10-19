@@ -1,0 +1,79 @@
+<div class="container mx-auto m-5 p-5">
+
+<div class="container mt-5">
+
+    <h6 class="ml-5 mt-5" style="color: #ff6600;">Edit Category</h6>
+    <div class="mx-0 col-lg-6 mt-3 mb-5 d-flex flex-row " >
+        
+	    <p class="mx-0" id="err" style="color: #ff0000;">
+    
+        </p>
+					<form class="mb-5 ml-5 row contact_form" action="/admin/update-category/{{category._id}}" method="post" id="contactForm" novalidate="novalidate">
+						<div class="col-md-6">
+							<div class="form-group">
+                                <label class="m-3"> Category Name</label>
+								<input type="text" value="{{category.name}}" class="form-control" id="name" name="name" placeholder="Enter Category Name">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+                                 <label class="m-3"> Description</label>
+								<input class="form-control" value="{{category.description}}" name="description" id="description" rows="1" placeholder="Enter Description"></input>
+							</div>
+						</div>
+						
+						<div class="col-md-12 text-right">
+							<button type="submit" value="submit" class="primary-btn">Edit Category</button>
+						</div>
+
+                {{!-- =============================SENDING CATEGORY NAME TO BACKEND================================== --}}
+                        <div class="form-group" style="display:none;">
+                                 <label class="m-3">Original Category Name</label>
+								<input class="form-control" value="{{category.name}}" name="originalCategory" id="description" rows="1" placeholder="Enter Description"></input>
+							</div>
+					</form>
+    </div>
+
+
+    {{!-- <div class="container mb-5">
+ <div class="p-5 m-2 checkout_btn_inner d-flex align-items-center ">
+                                      
+                                        <a class="primary-btn" href="/admin/addproducts">Add Products</a>
+</div> --}}
+
+ 
+</div>
+</div>
+
+
+
+{{!-- //============================================ F O R M    V A L I D A T I O N =================================== --}}
+
+
+<script>
+
+	const form=document.getElementById('contactForm')
+	const name=document.getElementById('name')
+	const description=document.getElementById('description')
+	const err=document.getElementById('err')
+
+	form.addEventListener('submit',(e)=>{
+		let messages=[]
+		if(name.value==='' || description.value===''){
+			messages.push('All fields Required!')
+		}
+		
+		if(messages.length>0){
+			e.preventDefault()
+			err.innerText=messages.join(',')
+		
+		}
+	
+	})
+
+</script>
+
+
+
+
+			
