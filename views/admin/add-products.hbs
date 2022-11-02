@@ -1,59 +1,151 @@
-<div class="col-lg-9 p-5">
-					<form class="row contact_form" enctype="multipart/form-data" action="/admin/addproducts" method="post" id="contactForm" novalidate="novalidate">
-						<div class="col-md-6">
-							<div class="form-group">
-								<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'">
-							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" id="subject" name="price" placeholder="Price" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'">
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<textarea class="form-control" name="description" id="message" rows="1" placeholder="Description" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'"></textarea>
-							</div>
-						</div>
-                         <div class="quantity-container d-flex align-items-center mt-15 ml-3">
-										<small class="mr-2">Quantity:</small>
-										<input type="text" name="quantity" class="quantity-amount ml-15" value="1" />
-										<div class="arrow-btn d-inline-flex flex-column">
-											<button class="increase arrow" type="button" title="Increase Quantity"><span class="lnr lnr-chevron-up"></span></button>
-											<button class="decrease arrow" type="button" title="Decrease Quantity"><span class="lnr lnr-chevron-down"></span></button>
-										</div>
-                        </div>
+<!-- cropper -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.js"></script>
+<!-- Font Awesome -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+<!-- Google Fonts -->
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  rel="stylesheet"
+/>
+<!-- MDB -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css"
+  rel="stylesheet"
+/>
+
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
+></script>
+<div class="col-lg-12 m-5">
+	<form class="row contact_form m-5" enctype="multipart/form-data" action="/admin/addproducts" method="post"
+		id="contactForm" novalidate="novalidate">
+		<div class="col-md-6">
+			<div class="form-group">
+				<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name"
+					onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" id="price" name="price" placeholder="Selling Price"
+					onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Selling Price'">
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="form-group">
+				<textarea class="form-control" name="description" id="message" rows="1" placeholder="Description"
+					onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'"></textarea>
+			</div>
+		</div>
+		<div class="quantity-container d-flex align-items-center mt-15 ml-3">
+			<small class="mr-2">Quantity:</small>
+			<input type="text" name="quantity" class="quantity-amount ml-15" value="1" />
+			<div class="arrow-btn d-inline-flex flex-column">
+				<button class="increase arrow" type="button" title="Increase Quantity"><span
+						class="lnr lnr-chevron-up"></span></button>
+				<button class="decrease arrow" type="button" title="Decrease Quantity"><span
+						class="lnr lnr-chevron-down"></span></button>
+			</div>
+		</div>
 
 
-					<div class="d-flex row">
-						<div class="col-md-6">
-							<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
-                        <input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
-						
-						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Second Image</small> </label>
-                        <input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file"  />
-						
-						
-						<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Third Image</small> </label>
-                        <input name="image2" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
+		<div class="d-flex row">
+			<div class="col-md-6">
+				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
+				<input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
 
-						</div>
-                        
-                        
-						
-						<div class="ml-2 mt-5 col-md-4 col-xs-5">
-							<select name="category" >
-							<option value="" disabled selected>Choose Category</option>
-							{{#each categories}}
-							<option  value="{{this.name}}">{{this.name}}</option>
-							{{/each}}
-							</select>
-						</div>
-						
-					</div>
-						
-						<div class="col-md-12 text-right">
-							<button type="submit" value="submit" class="primary-btn">Add Product</button>
-						</div>
+				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Second Image</small> </label>
+				<input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
 
 
-					</form>
+				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Third Image</small> </label>
+				<input name="image2" class="form-control form-control-lg  ml-3" accept="image/*" id="imgFile"
+					type="file" />
+				<img src="" id="image1" alt="" class="imggmi" style="height:100px">
+				<div style="display:flex">
+					<div id="screen1" class="imggmi image-container" style="height: auto; width: auto"></div> <br>
 				</div>
+				<button type="button" class=" btn btn-outline-info " id="crop-1">Crop</button>
+			</div>
+
+
+
+			<div class="ml-2 mt-5 col-md-4 col-xs-5">
+				<select name="category">
+					<option value="" disabled selected>Choose Category</option>
+					{{#each categories}}
+					<option value="{{this.name}}">{{this.name}}</option>
+					{{/each}}
+				</select>
+			</div>
+
+		</div>
+
+		<div class="col-md-12 text-center">
+			<button type="submit" value="submit" class="btn btn-inverse-primary">Add Product</button>
+		</div>
+	</form>
+</div>
+
+<script>
+
+	const imagebox1 = document.getElementById('screen1')
+	const crop_btn1 = document.getElementById('crop-1')
+	const input1 = document.getElementById('imgFile')
+
+
+	function viewImage1(event) {
+		var fileInput1 = document.getElementById('imgFile');
+		var filePath1 = fileInput1.value;
+		var allowedExtensions = /(\.jpg)$/i;
+		if (!allowedExtensions.exec(filePath1)) {
+			fileInput1.value = '';
+			swal("There is a problem!", "Please choose image file.");
+			return false;
+		} else {
+			document.getElementById('image1').src = URL.createObjectURL(event.target.files[0])
+		}
+	}
+
+	input1.addEventListener('change', () => {
+		const img_data1 = input1.files[0]
+		const url1 = URL.createObjectURL(img_data1)
+		imagebox1.innerHTML = `<img src="${url1}" id="img1" style="width:100%;">`
+		const img1 = document.getElementById('img1')
+		document.getElementById('screen1').style.display = 'block'
+
+		document.getElementById('crop-1').style.display = 'block'
+		document.getElementById('image1').style.display = 'block'
+
+		const cropper1 = new Cropper(img1, {
+			autoCropArea: 1,
+			viewMode: 1,
+			scalable: false,
+			zoomable: false,
+			movable: false,
+			minCropBoxWidth: 50,
+			minCropBoxHeight: 50,
+			aspectRatio: 1 / 1,
+		})
+
+		crop_btn1.addEventListener('click', () => {
+
+			cropper1.getCroppedCanvas().toBlob((blob) => {
+				let fileInputElement1 = document.getElementById('imgFile');
+				let file1 = new File([blob], img_data1.name, { type: "image/*", lastModified: new Date().getTime() });
+				let container1 = new DataTransfer();
+				container1.items.add(file1);
+				fileInputElement1.files = container1.files;
+				document.getElementById('image1').src = URL.createObjectURL(fileInputElement1.files[0])
+				document.getElementById('screen1').style.display = 'none'
+				document.getElementById('crop-1').style.display = 'none'
+			})
+		})
+
+	})
+
+</script>

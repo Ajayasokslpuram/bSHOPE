@@ -1,0 +1,260 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">Offers</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Coupons </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+
+
+
+
+
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card p-5">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Add Category Offer</h4>
+                        <form action="/admin/add-categoryOffer" method="post">
+                            <div class="form-group row ">
+
+
+
+                                <div class="col">
+                                    <label>Offer Name</label>
+                                    <div id="the-basics">
+                                        <input class="typeahead" name="offerName" type="text"
+                                            placeholder="Offer Name" />
+                                        <input class="typeahead" name="offerType" value="category" type="text" hidden />
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <label>Discount</label>
+                                    <select name="discount" class="form-control">
+                                        <option value="10">10%</option>
+                                        <option value="20">20%</option>
+                                        <option value="30">30%</option>
+                                        <option value="40">40%</option>
+                                    </select>
+                                </div>
+
+
+                                <div class="col">
+                                    <label>Category</label>
+                                    <select name="category" class="form-control">
+                                        {{#each categoryList}}
+                                        <option value="{{this.name}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-inverse-primary">Add Offer</button>
+                        </form>
+
+                    </div>
+                    <hr>
+                    <div class="container mx-auto mt-5">
+
+                        <h4 class="card-title ml-3 mb-3">Category Offers</h4>
+
+
+                        <div class=" mx-auto col-md-12 col-lg-12 col-sm-12">
+
+
+                            {{#if errMessage}}
+                            <div class="alert alert-danger col-md-8" role="alert">
+                                {{errMessage}} Move <a href="/admin/viewproducts" class="alert-link">Products</a> to
+                                another category
+                            </div>
+                            {{/if}}
+                            {{#if succMessage}}
+                            <div class="alert alert-success" role="alert">
+                                {{succMessage}}
+                            </div>
+                            {{/if}}
+
+                            <table class="table table-hover align-middle mb-0 bg-white mb-5">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Offer Name</th>
+                                        <th>Discount</th>
+                                        <th>Applied Category</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each categoryOffers}}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <p class="fa-5 badge badge-primary d-inline mb-1">{{this.offerName}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ms-0">
+                                                <p class="text-muted mb-0">{{this.discount}}%</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge badge-success rounded-pill d-inline">{{this.category}}</span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/delete-offer/{{this._id}}" class="btn  btn-inverse-danger"
+                                                onclick="return confirm('Do You Want To Delete {{this.offerName}}?')">
+                                                Remove offer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                            <hr class="my-5">
+
+
+                            <h4 class="card-title  mb-4">Add Product Offers</h4>
+                            <form action="/admin/add-productOffer" method="post">
+                                <div class="form-group row ">
+
+
+
+                                    <div class="col-md-4">
+                                        <label>Offer Name</label>
+                                        <div id="the-basics">
+                                            <input class="typeahead" name="offerName" type="text"
+                                                placeholder="Offer Name" />
+                                            <input class="typeahead" name="offerType" value="product" type="text"
+                                                hidden />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Discount</label>
+                                        <select name="discount" class="form-control">
+                                            <option value="10">10%</option>
+                                            <option value="20">20%</option>
+                                            <option value="30">30%</option>
+                                            <option value="40">40%</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-4">
+                                        <button type="submit" class="btn btn-inverse-primary">Add Offer</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <h4 class="card-title mt-5">Product Offers</h4>
+                            <div class="table-responsive mb-5 col-md-8">
+                                <table id="tableUser" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Offer Name</th>
+                                            <th>Discount %</th>
+                                             <th>Delete Offer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each productOffers}}
+                                        <tr>
+                                            <td>{{this.offerName}}</td>
+                                            <td>{{this.discount}}%</td>
+                                            <td>
+                                                <a href="/admin/delete-Product-offer/{{this._id}}" class="btn  btn-inverse-danger"
+                                                onclick="return confirm('Do You Want To Remove All offers?')">
+                                                Remove offer
+                                            </a>
+                                            </td>
+
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive mt-5">
+                                <h4 class="card-title mt-5">Add Product Offer</h4>
+                                <table id="tableUser" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Title</th>
+                                            <th>Selling Price</th>
+                                            <th>MRP</th>
+                                            <th>Add Offer</th>
+                                            <th>Remove Offers</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each products}}
+                                        <tr>
+                                            <td class="py-1">
+                                                <img src="/product-images/{{this._id}}.jpg" alt=""
+                                                    style="width: 60px; height: 60px" />
+                                            </td>
+                                            <td>{{this.name}}</td>
+                                            <td>{{this.price}}</td>
+                                            <td>{{this.MRP}}</td>
+                                            <td>
+                                                <div class="col">
+                                                    <select name="category" onchange="fetchStatus(this.value,'{{this._id}}')" class="form-control">
+                                                        {{#each ../productOffers}}
+                                                        <option value="{{this._id}}">{{this.offerName}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/delete-Product-offer/{{this._id}}" class="btn  btn-inverse-danger"
+                                                onclick="return confirm('Do You Want To Remove All offers?')">
+                                                Remove offer
+                                            </a>
+                                            </td>
+
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {{!-- //============================================ F O R M V A L I D A T I O N
+                        =================================== --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script>
+           
+
+
+             function fetchStatus(OfferID,ProductID){
+            //let statusElement = document.getElementById(id)
+            $.ajax({
+                url: '/admin/apply-product-offer',
+                method: 'post',
+                data: {
+                    OfferID: OfferID,
+                    ProductID: ProductID,
+                },
+                success: (result) => {
+                    alert('worked')
+                    location.reload()
+                }
+
+            })
+
+
+        }
+        </script>

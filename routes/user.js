@@ -9,6 +9,18 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceId = process.env.TWILIO_SERVICE_ID;
 const client = require('twilio')(accountSid, authToken);
 
+
+const paypal = require('paypal-rest-sdk');
+
+paypal.configure({
+  'mode': 'sandbox', //sandbox or live
+  'client_id': 'AV-7oSISCZlb97v9R7a4kV-15G7LNGUl4r2Ft0CLP3jjT2vIqYzHxejVzfUZUClRYPO0FFErZEzZIJip',
+  'client_secret': 'EJ4gileqXDEASVQ_cQcdUSwKnb56QUtIlyesHhB7frr5O8HHFGeag9JB-lfjkodoCuzVf-D_y3OKSakL'
+});
+
+
+//=====================================================================
+
 const verifySession = (req, res, next) => {
   if (req.session.user) {
     next()
@@ -94,14 +106,24 @@ router.get('/registration', function (req, res, next) {
   res.render('user/registration', { errMessage: req.flash('userExists') })
 })
 
-router.post('/signup', function (req, res, next) {
-  userHelpers.doSignup(req.body).then((response) => {
-    res.redirect('/')
+router.post('/signup', async function (req, res, next) {
+  let userID = 0
+  let userData = {}
+  await userHelpers.doSignup(req.body).then(async (response) => {
+    userID = response.insertedId
+    await userHelpers.findUser(userID).then(async (user) => {
+      userData = user
+      await userHelpers.createWallet(userData._id).then(() => {
+        console.log(userData, userID, 'route')
+        req.session.user = userData
+        res.redirect('/')
+      })
+    })
+
   }).catch(() => {
     req.flash('userExists', 'Email or Mobile is Already Registered !')
     res.redirect('/registration')
   })
-
 })
 
 
@@ -124,8 +146,9 @@ router.get('/add-to-cart/:id', verifySession, function (req, res, next) {
 })
 
 router.get('/cart', verifySession, async function (req, res, next) {
-
+ 
   let products = await userHelpers.getCartProducts(req.session.user._id)
+  console.log(products);
   let productsNetAmount = 0
   if (products.length > 0) {
     productsNetAmount = await userHelpers.getTotalAmount(req.session.user._id)
@@ -268,17 +291,47 @@ router.post('/delete-from-cart', verifySession, (req, res, next) => {
 })
 
 router.get("/proceed-to-checkout", verifySession, async (req, res, next) => {
+  let products = await userHelpers.getCartProducts(req.session.user._id)
+  console.log(products,'checkout');
+  let walletObj = {}
+  let productsNetAmount = await userHelpers.getTotalAmount(req.session.user._id)
+  let proceedWallet=false
+  await userHelpers.getWallet(req.session.user).then((wallet) => {
+    walletObj = wallet;
+  })
+  if(productsNetAmount<walletObj.amount){
+    proceedWallet=true
+  }
+  console.log(proceedWallet,'proceedWallet')
   userHelpers.getAllAddress(req.session.user).then(async (address) => {
-    let productsNetAmount = await userHelpers.getTotalAmount(req.session.user._id)
-    res.render('user/checkout', { address, productsNetAmount, user: req.session.user })
+    
+    if (address.length <= 0) {
+      res.render('user/checkout', { address, productsNetAmount, user: req.session.user, addressZero: true,wallet:walletObj,proceedWallet,products })
+    }
+    else {
+      res.render('user/checkout', { address, productsNetAmount, user: req.session.user,wallet:walletObj,proceedWallet,products })
+    }
+
   })
 
 })
 
 router.post('/place-order', verifySession, async (req, res, next) => {
   console.log('api called')
+  console.log(req.body,'checkout body')
   let products = await userHelpers.getCartProductList(req.body.userID)
-  let productsNetAmount = await userHelpers.getTotalAmount(req.body.userID)
+  let productsAmount = await userHelpers.getTotalAmount(req.session.user._id)
+  let productsNetAmount = 0;
+  if(req.body.coupon){
+    userHelpers.claimCoupon(req.body.coupon).then(async(data)=>{
+      productsNetAmount = productsAmount-((productsAmount/100)*data.discount);
+    })
+  }
+  else{
+    productsNetAmount=productsAmount;
+  }
+ 
+  console.log(productsNetAmount,'afterDiscount')
   let address = {}
   if (req.body.flexRadioDefault == 'new') {
     address = req.body
@@ -289,24 +342,110 @@ router.post('/place-order', verifySession, async (req, res, next) => {
     })
   }
   await userHelpers.placeOrder(req.body, address, products, productsNetAmount).then(async (orderID) => {
+    var orderID=orderID;
     console.log(address, 'parameters ready')
     if (req.body.selector == 'COD') {
       console.log('cod called')
       res.json({ COD_Success: true })
     }
-    else {
+    if(req.body.selector=='wallet'){
+      await userHelpers.purchaseWithWallet(productsNetAmount,orderID,req.session.user).then(async()=>{
+        await userHelpers.changePaymentStatus(orderID).then(()=>{
+          res.json({ COD_Success: true })
+        }) 
+      })
+    }
+    if (req.body.selector == 'razorpay') {
       await userHelpers.generateRazorpay(orderID, productsNetAmount).then((response) => {
+        response.razorpayMethod = true
         res.json(response)
       })
     }
 
+    if (req.body.selector == 'paypal') {
+      console.log('paypal called');
+
+
+      var payment = {
+        "intent": "authorize",
+        "payer": {
+          "payment_method": "paypal",
+        },
+
+        "redirect_urls": {
+          "return_url": "http://localhost:3000/order-success",
+          "cancel_url": "http://127.0.0.1:3000/err"
+        },
+        "transactions": [{
+          "amount": {
+            "total": productsNetAmount,
+            "currency": "USD"
+          },
+          "description": " Paid Through Paypal "
+        }]
+      }
+
+
+      userHelpers.createPay(payment)
+        .then((transaction) => {
+          var id = transaction.id;
+          var links = transaction.links;
+          var counter = links.length;
+          while (counter--) {
+            if (links[counter].method == 'REDIRECT') {
+              console.log(links[counter], 'counterandlink')
+              // redirect to paypal where user approves the transaction
+              transaction.readyToRedirect = true;
+              transaction.redirectLink = links[counter].href
+              transaction.orderID = orderID
+              console.log(payment)
+
+              // return res.redirect(links[counter].href)
+              userHelpers.changePaymentStatus(orderID).then(() => {
+                console.log('status changed')
+                res.json(transaction)
+              })
+
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/err');
+        });
+    }
+
+
   })
+})
+
+// error page 
+router.get('/err', (req, res) => {
+  console.log(req.query);
+  res.send('/err.html');
+})
+
+router.post('/verify-payment', verifySession, (req, res, next) => {
+  console.log('payment verify called', req.body)
+  userHelpers.verifyPayment(req.body).then(() => {
+    console.log('payment verified')
+    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
+      console.log('status changed')
+      res.json({ Razor_status: true })
+    })
+  }).catch((err) => {
+    console.log(err);
+    res.json({ status: false, errMsg: '' })
+  })
+
 })
 
 
 
 router.get("/order-success", verifySession, async (req, res, next) => {
-  res.render('user/order-confirmation', { user: req.session.user })
+  let orders = await userHelpers.getUserOrders(req.session.user._id)
+  let order = orders[0]
+  res.render('user/order-confirmation', { user: req.session.user, order })
 })
 
 
@@ -319,22 +458,25 @@ router.get("/view-order-products/:id", verifySession, async (req, res, next) => 
   let orderProducts = await userHelpers.getOrderProducts(req.params.id)
   await userHelpers.getOrderStatus(req.params.id).then((order) => {
     console.log(order.status, orderProducts, 'order-orderProducts')
-    let orderStatus = order.status
+    let orderStatus = order.status  
     if (orderStatus == 'Placed') {
       console.log(orderStatus, 'orderstatus')
       console.log('placed called')
-      res.render('user/view-order-products', { user: req.session.user, orderProducts, Placed: true })
+      res.render('user/view-order-products', { user: req.session.user, orderProducts, Placed: true, order: order })
     }
     if (orderStatus == 'Shipped') {
-      res.render('user/view-order-products', { user: req.session.user, orderProducts, Shipped: true })
+      res.render('user/view-order-products', { user: req.session.user, orderProducts, Shipped: true, order: order })
     }
     if (orderStatus == 'Canceled') {
       console.log('canceled called')
-      res.render('user/view-order-products', { user: req.session.user, orderProducts, Canceled: true })
+      res.render('user/view-order-products', { user: req.session.user, orderProducts, Canceled: true, order: order })
     }
     if (orderStatus == 'Delivered') {
-      res.render('user/view-order-products', { user: req.session.user, orderProducts, Delivered: true })
+      res.render('user/view-order-products', { user: req.session.user, orderProducts, Delivered: true, order: order })
 
+    }
+    if (orderStatus == 'Return Requested') {
+      res.render('user/view-order-products', { user: req.session.user, orderProducts, Return: true, order: order })
     }
 
 
@@ -355,26 +497,16 @@ router.get("/cancel-order-products/:id", verifySession, async (req, res, next) =
 })
 //sssssssssssssssssssssssssssssssssssssssssss
 
-router.post('/verify-payment', verifySession, (req, res, next) => {
-  console.log('payment verify called', req.body)
-  userHelpers.verifyPayment(req.body).then(() => {
-    console.log('payment verified')
-    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
-      console.log('status changed')
-      res.json({ Razor_status: true })
-    })
-  }).catch((err) => {
-    console.log(err);
-    res.json({ status: false, errMsg: '' })
-  })
-
-})
-
 
 router.get("/user-profile", verifySession, async (req, res, next) => {
+  let walletObj = {}
+  userHelpers.getWallet(req.session.user).then((wallet) => {
+    walletObj = wallet;
+  })
   userHelpers.getAllAddress(req.session.user).then((address) => {
     console.log(address)
-    res.render('user/user-profile', { address, user: req.session.user, passChangeSuccess: req.flash('updateStatusSuccess'), passChangeFail: req.flash('updateStatusFail') })
+    console.log(walletObj,'walletobj')
+    res.render('user/user-profile', { address, user: req.session.user, passChangeSuccess: req.flash('updateStatusSuccess'), passChangeFail: req.flash('updateStatusFail'), wallet: walletObj })
   })
 
 
@@ -400,5 +532,37 @@ router.post("/add-address", verifySession, async (req, res, next) => {
 })
 
 
+router.post("/return-product", verifySession, async (req, res, next) => {
+  await userHelpers.changeOrderStatus(req.body.orderID, req.session.user)
+  console.log(req.body)
+  console.log('api called')
+  res.json({ success: true })
+})
+
+router.post("/claim-referal", verifySession, async (req, res, next) => {
+  await userHelpers.claimReferal(req.body.referalID, req.session.user).then(()=>{
+    res.json({ success: true })
+  }).catch(()=>{
+    res.json({ success: false })
+    
+  })
+
+ 
+})
+
+router.post("/claim-coupon", verifySession, async (req, res, next) => {
+  userHelpers.claimCoupon(req.body.coupon).then(async(data)=>{
+    let productsNetAmount = await userHelpers.getTotalAmount(req.session.user._id)
+    let discountDeduction=((productsNetAmount/100)*data.discount)
+    let finalAmount= productsNetAmount-((productsNetAmount/100)*data.discount);
+    console.log(finalAmount)
+    data.success=true
+    data.finalAmount=finalAmount;
+    data.discountDeduction=discountDeduction;
+    res.json(data)
+  }).catch(()=>{
+    res.json({success:false})
+  })
+})
 
 module.exports = router; 

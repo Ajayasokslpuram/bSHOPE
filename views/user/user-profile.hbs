@@ -22,12 +22,175 @@
                         <p class="text-muted mb-1">{{user.email}}</p>
                         <p class="text-muted mb-4">{{user.mobile}}</p>
                         <div class="d-flex justify-content-center mb-2">
+
+
+
+                            {{#if wallet.referalClaimed}}
                             <button type="button" class="btn btn-primary">invite</button>
-                            <button type="button" class="btn btn-outline-primary ms-1">Sign Out</button>
+                            <button type="button" class="btn btn-outline-primary ms-1 " data-mdb-toggle="modal"
+                                data-mdb-target="#exampleModal1" data-mdb-whatever="@getbootstrap">Referal</button>
+
+                            {{else}}
+                            <button type="button" class="btn btn-primary">invite</button>
+                            <button type="button" class="btn btn-outline-primary ms-1 " data-mdb-toggle="modal"
+                                data-mdb-target="#exampleModal" data-mdb-whatever="@getbootstrap">Referal</button>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Referal</h5>
+                                <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="referalForm">
+                                    <div class="m-3">
+                                        <label for="message-text" class="col-form-label">Your Referal Code:</label>
+                                        <p>{{user.mobile}}</p>
+                                        <label for="message-text" class="col-form-label">Referal Code</label>
+                                        <input class="form-control" id="message-text" name="referalID">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-mdb-dismiss="modal">Close</button>
+                                        <button type="sumbit" class="btn btn-primary">Claim</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModal1Label"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModal1Label">Referal</h5>
+                                <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="m-3">
+                                    <label for="message-text" class="col-form-label">Your Referal Code:</label>
+                                    <p>{{user.mobile}}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">OK</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
                 <div class="card my-4 mb-lg-0" style="background-color:#eee;">
+                    <div class="row ">
+                        <div class="col-md-12 ml-3 mt-3">
+                            <h6>Wallet Balance: ${{wallet.amount}}.00</h6>
+                        </div>
+                    </div>
+
+
+
+                    <div class="accordion mt-2 mb-5" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingWallet">
+                                <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#collapseWallet" aria-expanded="false"
+                                    aria-controls="collapseWallet">
+                                    <h6>Wallet History</h6>
+                                </button>
+                            </h2>
+                            <div id="collapseWallet" class="accordion-collapse collapse" aria-labelledby="headingWallet"
+                                data-mdb-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="card-body p-0">
+                                        <div class="col-sm-12">
+
+                                            {{#each wallet.transactions}}
+                                            {{#if this.transactionAmount}}
+                                            <div class="col-md-12">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <h6>{{this.transactionDate}}</h6>
+                                                        </div>
+                                                    </div>
+                                                    <hr class="mt-0 mb-4">
+                                                    <div class="row">
+                                                        <div class="col-6 mb-3">
+                                                            <h6>${{this.transactionAmount}}.00</h6>
+
+                                                        </div>
+                                                        <div class="col-6 mb-3">
+
+                                                            <p class="text-muted"></p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row">
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <p class="text-muted">{{this.transactionDesccription}}</p>
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-8 mb-3">
+                                                            <p class="text-muted">Transaction Type :</p>
+
+                                                        </div>
+                                                        <div class="col-4 mb-3">
+
+                                                            <p>{{this.transactionType}}</p>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <p class="text-muted">{{this.transactionDate}}</p>
+                                                    </div>
+                                                    <hr class="mt-0 mb-4">
+
+                                                </div>
+                                            </div>
+                                            {{/if}}
+                                            {{/each}}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
                     <div class="accordion" id="accordionExample">
@@ -132,18 +295,27 @@
                                             {{#each address}}
                                             <div class="col-md-12">
                                                 <div class="card-body">
-                                                    <h6>Address {{inc @index}}</h6>
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <h6>Address {{inc @index}}</h6>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <a>
+                                                                <i class="fas fa-trash" style="color:#b60505;"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                     <hr class="mt-0 mb-4">
                                                     <div class="row">
                                                         <div class="col-6 mb-3">
-                                                          
+
                                                             <p class="text-muted">{{this.name}} {{this.lname}}</p>
                                                         </div>
                                                         <div class="col-6 mb-3">
-                                                            
+
                                                             <p class="text-muted"></p>
                                                         </div>
-                                                        
+
                                                     </div>
                                                     <div class="row">
 
@@ -166,14 +338,14 @@
 
                                                     <div class="row">
                                                         <div class="col-6 mb-3">
-                                                          
+
                                                             <p class="text-muted">{{this.town}}</p>
                                                         </div>
                                                         <div class="col-6 mb-3">
-                                                            
+
                                                             <p class="text-muted">{{this.zip}}</p>
                                                         </div>
-                                                        
+
                                                     </div>
 
                                                     <hr class="mt-0 mb-4">
@@ -393,3 +565,26 @@
             </div>
         </div>
 </section>
+
+<script>
+    $("#referalForm").submit((e) => {
+        console.log('apicalled')
+        e.preventDefault()
+        $.ajax({
+            url: '/claim-referal',
+            method: 'post',
+            data: $('#referalForm').serialize(),
+            success: (response) => {
+                if (response.success) {
+                    swal("Referal Claimed!", "Thank You For Choosing bShope!", "success").then(() => {
+                        location.reload('/user-profile')
+                    });
+                }
+                else {
+                    console.log('reached Here')
+                    swal("Oops!", "Coudn't find user with this referal ID!", "error");
+                }
+            }
+        })
+    })
+</script>

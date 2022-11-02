@@ -1,0 +1,70 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">Coupons</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Coupons </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+
+
+
+
+
+            <div class="col-md-10 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Create New Coupon</h4>
+                        <form action="/admin/add-coupon" method="post">
+                            <div class="form-group row ">
+
+
+
+                                <div class="col">
+                                    <label>Coupon Code</label>
+                                    <div id="the-basics">
+                                        <input class="typeahead" name="couponCode" type="text"
+                                            placeholder="Coupon Code" />
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <label>Discount</label>
+                                    <select name="discount" class="form-control">
+                                        <option value="10">10%</option>
+                                        <option value="20">20%</option>
+                                        <option value="30">30%</option>
+                                        <option value="40">40%</option>
+                                    </select>
+                                </div>
+
+
+                                <div class="col">
+                                    <label>Expiry</label>
+                                    <select name="expiry" class="form-control">
+                                        <option value="1">7 Days</option>
+                                        <option value="10">10 Days</option>
+                                        <option value="30">30 Days</option>
+                                        <option value="60">60 Days</option>
+                                    </select>
+                                </div>
+
+
+                            </div>
+                            <button type="submit" class="btn btn-inverse-primary">Add Coupon</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

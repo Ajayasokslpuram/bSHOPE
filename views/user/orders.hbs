@@ -10,7 +10,7 @@
                                 <th scope="col">Address</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Details</th>
-                                <th scope="col">Options</th>
+                                {{!-- <th scope="col">Options</th> --}}
                             </tr>
                         </thead>                      
                                            
@@ -54,9 +54,9 @@
                                     <a class="btn btn-link btn-light" href="/view-order-products/{{this._id}}">Details</a>
                                     
                                 </td>
-                                <td>
+                                {{!-- <td>
                                     <a class="btn btn-link btn-light" href="/cancel-order-products/{{this._id}}">Cancel</a>
-                                </td>
+                                </td> --}}
                             </tr>
                             {{/each}}
                         </tbody>

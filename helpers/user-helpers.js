@@ -12,6 +12,10 @@ var instance = new Razorpay({
     key_secret: 'Mn0WRR8jVHNsshE4GpBAxHrM'
 })
 
+const paypal = require('paypal-rest-sdk');
+
+
+
 const { v4: uuidv4 } = require('uuid');
 const cookieParser = require('cookie-parser')
 module.exports = {
@@ -25,14 +29,40 @@ module.exports = {
                 console.log(userWithMobile)
                 reject()
             }
-            userData.address=['sample Address']
+
+            userData.address = ['sample Address']
+            userData.isBlocked = false;
             userData.password = await bcrypt.hash(userData.password, 10)
-            db.get().collection(collectionNames.USER_COLLECTION).insertOne(userData).then((data) => {
+            await db.get().collection(collectionNames.USER_COLLECTION).insertOne(userData).then(async (data) => {
                 resolve(data)
             })
         })
 
     },
+
+    findUser: (id) => {
+        return new Promise(async (resolve, reject) => {
+            let user = await db.get().collection(collectionNames.USER_COLLECTION).findOne({ _id: objectId(id) })
+            console.log(user, 'helper')
+            resolve(user)
+        })
+    },
+    createWallet: (id) => {
+        return new Promise(async (resolve, reject) => {
+
+            let walletObj = {
+                user: id,
+                amount: 0.00,
+                transactions: [''],
+                referalClaimed: false
+            }
+            await db.get().collection(collectionNames.WALLET_COLLECTION).insertOne(walletObj).then(() => {
+
+            })
+            resolve()
+        })
+    },
+
 
     changePassword: (data) => {
         return new Promise(async (resolve, reject) => {
@@ -52,6 +82,8 @@ module.exports = {
 
         })
     },
+
+
 
     doLogin: (userData) => {
         return new Promise(async (resolve, reject) => {
@@ -199,11 +231,20 @@ module.exports = {
 
     //===============================CART====================
 
-    addToCart: (productId, userId) => {
+    addToCart: async (productId, userId) => {
+        let name = ''
+        let price = 0
+        await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({ _id: objectId(productId) }).then((data) => {
+            name = data.name
+            price = data.price
+        })
         let productObject = {
             item: objectId(productId),
-            quantity: 1
+            quantity: 1,
+            name: name,
+            price: price
         }
+        console.log(productObject, 'oomfiiii')
         return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(collectionNames.CART_COLLECTION).findOne({ user: objectId(userId) })
             if (userCart) {
@@ -253,7 +294,8 @@ module.exports = {
                 {
                     $project: {
                         item: '$products.item',
-                        quantity: '$products.quantity'
+                        quantity: '$products.quantity',
+                        name: '$products.name'
                     }
                 },
                 {
@@ -266,7 +308,7 @@ module.exports = {
                 },
                 {
                     $project: {
-                        item: 1, quantity: 1, product: { $arrayElemAt: ['$product', 0] }
+                        item: 1, quantity: 1, name: 1, price: 1, product: { $arrayElemAt: ['$product', 0] }
                     }
                 }
 
@@ -321,7 +363,7 @@ module.exports = {
                 },
                 {
                     $project: {
-                        item: 1, quantity: 1, product: { $arrayElemAt: ['$product', 0] }
+                        item: 1, quantity: 1, name: 1, price: 1, product: { $arrayElemAt: ['$product', 0] }
                     }
                 },
                 {
@@ -338,13 +380,13 @@ module.exports = {
         })
 
     },
-    placeOrder: (order,address, products, productsNetAmount) => {
+    placeOrder: (order, address, products, productsNetAmount) => {
         return new Promise((resolve, reject) => {
-            console.log(order,address, products, productsNetAmount,'parameters')
-            let status = order.selector === 'COD' ? 'placed' : 'pending'
+            console.log(order, address, products, productsNetAmount, 'parameters')
+            let status = order.selector === 'COD' ? 'Placed' : 'pending'
             let orderObj = {
                 deliveryDetails: {
-                    name:address.fname+' '+address.lname,
+                    name: address.fname + ' ' + address.lname,
                     mobile: address.mobile,
                     email: address.email,
                     address: address.address1 + ',' + address.address2,
@@ -356,13 +398,34 @@ module.exports = {
                 products: products,
                 productsNetAmount: productsNetAmount,
                 status: status,
-                date: moment().format('Do MMM  YY, hh:mm a')
+                date: moment().format('Do MMM  YY, hh:mm a'),
+                created: new Date(Date.now())
             }
 
             db.get().collection(collectionNames.ORDER_COLLLECTION).insertOne(orderObj).then((response) => {
                 resolve(response.insertedId)
                 db.get().collection(collectionNames.CART_COLLECTION).deleteOne({ user: objectId(order.userID) }) //deleting product from cart after order
             })
+        })
+    },
+    purchaseWithWallet:(amount,orderID,user)=>{
+        let transactionObj = {
+            transactionDesccription: "Product Purchase",
+            transactionAmount: amount,
+            transactionType: 'Debit',
+            transactionDate: moment().format('Do MMM  YY, hh:mm a'),
+        }
+        let price=parseInt(amount)
+        console.log(price)
+        
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(collectionNames.WALLET_COLLECTION).updateOne({
+                user:objectId(user._id)
+            },{
+                $inc:{amount:-price},
+                $push: { transactions: transactionObj }
+            })
+            resolve()
         })
     },
     getCartProductList: (userID) => {
@@ -413,13 +476,26 @@ module.exports = {
         })
     },
 
+    createPay: (payment) => {
+        return new Promise((resolve, reject) => {
+            paypal.payment.create(payment, function (err, payment) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(payment);
+                }
+            });
+        });
+    },
+
     getUserOrders: (userID) => {
         return new Promise(async (resolve, reject) => {
             console.log(userID);
             let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION)
                 .find({ userID: objectId(userID) }).toArray()
             console.log(orders);
-            resolve(orders)
+            resolve(orders.reverse())
 
 
         })
@@ -458,15 +534,11 @@ module.exports = {
             resolve(orderItems)
         })
     },
-    getOrderStatus:(orderID)=>{
-        return new Promise(async(resolve,reject)=>{
-         let order= await  db.get().collection(collectionNames.ORDER_COLLLECTION).findOne({_id:objectId(orderID)})
+    getOrderStatus: (orderID) => {
+        return new Promise(async (resolve, reject) => {
+            let order = await db.get().collection(collectionNames.ORDER_COLLLECTION).findOne({ _id: objectId(orderID) })
             resolve(order)
         })
-           
-           
-    
-        
     },
 
 
@@ -476,6 +548,34 @@ module.exports = {
         console.log(orderID);
         return new Promise(async (resolve, reject) => {
             console.log(orderID);
+            let order= await db.get().collection(collectionNames.ORDER_COLLLECTION).findOne({_id:objectId(orderID)})
+            function returnMoney(order){
+                let refundMoney=order.productsNetAmount;
+                let transactionObj = {
+                    transactionDesccription: "Refund from Product Cancellation",
+                    transactionAmount: refundMoney,
+                    transactionType: 'Credit',
+                    transactionDate: moment().format('Do MMM  YY, hh:mm a'),
+                }
+                
+                db.get().collection(collectionNames.WALLET_COLLECTION).updateOne({user:objectId(order.userID)},{
+                    $inc: { amount: refundMoney},
+                $push: { transactions: transactionObj }
+                })
+
+                
+
+            }
+            if(order.paymentMethod=='razorpay'){
+                returnMoney(order);
+            }
+            if(order.paymentMethod=='wallet'){
+                returnMoney(order);
+            }
+            if(order.paymentMethod=='paypal'){
+                returnMoney(order);
+            }
+
             await db.get().collection(collectionNames.ORDER_COLLLECTION)
                 .updateOne({ _id: objectId(orderID) }, {
                     $set: { status: 'Canceled' }
@@ -486,8 +586,8 @@ module.exports = {
         })
 
     },
-    addAddress:(address,user)=>{
-        return new Promise(async(resolve,reject)=>{
+    addAddress: (address, user) => {
+        return new Promise(async (resolve, reject) => {
 
 
             // let index= await db.get().collection(collectionNames.USER_COLLECTION).aggregate([{
@@ -501,25 +601,25 @@ module.exports = {
             //  ] ).toArray()
 
             //  size=index[0].ArraySize
-            
+
             //  console.log(size,'finalsize')
 
             //  address.indexNum=size;
-            address.key=uuidv4(); 
+            address.key = uuidv4();
 
 
-             db.get().collection(collectionNames.USER_COLLECTION)
-                        .updateOne({ _id: objectId(user._id) }, {
+            db.get().collection(collectionNames.USER_COLLECTION)
+                .updateOne({ _id: objectId(user._id) }, {
 
-                            $push: { address: address }
+                    $push: { address: address }
 
-                        })
-        })  
+                })
+        })
     },
-    
-    getAllAddress:(user)=>{
-        return new Promise(async(resolve,reject)=>{
-            allAddress=await db.get().collection(collectionNames.USER_COLLECTION).aggregate([
+
+    getAllAddress: (user) => {
+        return new Promise(async (resolve, reject) => {
+            allAddress = await db.get().collection(collectionNames.USER_COLLECTION).aggregate([
                 {
                     $match: { _id: objectId(user._id) }
                 },
@@ -536,23 +636,24 @@ module.exports = {
                         address2: '$address.address2',
                         town: '$address.town',
                         zip: '$address.zip',
-                        key:'$address.key'
+                        key: '$address.key'
                     }
                 }
             ]).toArray()
-           resolve(allAddress)
+            await allAddress.shift()
+            resolve(allAddress)
         })
     },
-    getAddress:(user,addresskey)=>{
-        return new Promise(async(resolve,reject)=>{
-          let data= await db.get().collection(collectionNames.USER_COLLECTION).aggregate([
+    getAddress: (user, addresskey) => {
+        return new Promise(async (resolve, reject) => {
+            let data = await db.get().collection(collectionNames.USER_COLLECTION).aggregate([
                 {
                     $match: { _id: objectId(user._id) }
                 },
                 {
-                    
-                        $unwind: '$address'
-                    
+
+                    $unwind: '$address'
+
                 },
                 {
                     $project: {
@@ -564,27 +665,93 @@ module.exports = {
                         address2: '$address.address2',
                         town: '$address.town',
                         zip: '$address.zip',
-                        key:'$address.key'
+                        key: '$address.key'
                     }
                 },
                 {
-                    $match:{key:addresskey}
+                    $match: { key: addresskey }
                 }
             ]).toArray()
-          
-            let address= data[0]
-                // name:data[0].name,
-                // lname:data[0].lname,
-                // email:data[0].email,
-                // mobile:data[0].mobile,
-                // address1:data[0].address1,
-                // address2:data[0].address2,
-                // town:data[0].town,
-                // zip:data[0].zip,
+
+            let address = data[0]
+            // name:data[0].name,
+            // lname:data[0].lname,
+            // email:data[0].email,
+            // mobile:data[0].mobile,
+            // address1:data[0].address1,
+            // address2:data[0].address2,
+            // town:data[0].town,
+            // zip:data[0].zip,
             resolve(address)
         })
+    },
+
+
+    changeOrderStatus: (orderID) => {
+
+        return new Promise(async (resolve, reject) => {
+            await db.get().collection(collectionNames.ORDER_COLLLECTION).updateOne({
+                _id: objectId(orderID)
+            }, {
+                $set: { status: 'Return Requested' }
+            })
+            resolve()
+        })
+
+
+    },
+
+    claimReferal: (referalID, user) => {
+        return new Promise(async (resolve, reject) => {
+        let referedUser= await db.get().collection(collectionNames.USER_COLLECTION).findOne({mobile:referalID})
+        if(referedUser){
+            let transactionObjReferedUser = {
+                transactionDesccription: "Referal Reward",
+                transactionAmount: 50,
+                transactionType: 'Credit',
+                transactionDate: moment().format('Do MMM  YY, hh:mm a'),
+            }
+            let transactionObjUser = {
+                transactionDesccription: "Referal Reward",
+                transactionAmount: 25,
+                transactionType: 'Credit',
+                transactionDate: moment().format('Do MMM  YY, hh:mm a'),
+            }
+            await db.get().collection(collectionNames.WALLET_COLLECTION).updateOne({
+                user: objectId(referedUser._id)
+            }, {
+                $inc: { amount: 50},
+                $push: { transactions: transactionObjReferedUser }
+            })
+            await db.get().collection(collectionNames.WALLET_COLLECTION).updateOne({
+                user:objectId(user._id)
+            },{
+                $set:{ referalClaimed: true },
+                $inc: { amount: 25},
+                $push: { transactions: transactionObjUser }
+            })
+            resolve()
+        }
+           reject()
+        })
+    },
+    getWallet: (user) => {
+        return new Promise(async (resolve, reject) => {
+            let userWallet = await db.get().collection(collectionNames.WALLET_COLLECTION).findOne({ user: objectId(user._id) })
+            userWallet.transactions = userWallet.transactions.reverse()
+            resolve(userWallet)
+        })
+    },
+    claimCoupon:(couponCode)=>{
+        return new Promise(async(resolve,reject)=>{
+            let coupon= await db.get().collection(collectionNames.COUPON_COLLECTION).findOne({coupon:couponCode})
+            if(coupon){
+                resolve(coupon)
+            }
+            else{
+                reject(coupon)
+            }
+        })
     }
-
-
 
 }

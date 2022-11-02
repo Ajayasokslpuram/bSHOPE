@@ -1,3 +1,10 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="page-header">
@@ -17,7 +24,7 @@
                     <div class="card-body">
                         </p>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table id="orderTable" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Order Details</th>
@@ -71,7 +78,17 @@
 
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+<script>
+    $.extend( $.fn.dataTable.defaults, {
+    
+    ordering:  false
+} );
+$(document).ready( function () {
+    $('#orderTable').DataTable();
+  
+} );
+</script>
 
     <script>
 

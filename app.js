@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload())
 app.use(session({
   secret:"Key",
-  cookie:{maxAge:600000}
+  cookie:{maxAge:6000000}
 }));
 app.use(flash());
 

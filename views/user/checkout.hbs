@@ -1,11 +1,55 @@
+
+<!-- JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
+
+<!-- 
+    RTL version
+-->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.rtl.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.rtl.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.rtl.min.css"/>
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.rtl.min.css"/>
+
 <!--================Checkout Area =================-->
 <section class="checkout_area section_gap">
     <div class="container">
         <div class="billing_details">
             <div class="row">
-                <div class="col-lg-8">
-                    <h3>Billing Details</h3>
-                     <form class="row contact_form mt-5" id="checkoutForm" action="#" method="post" novalidate="novalidate">
+                <div class="col-md-4 ml-auto">
+                    <form class="row contact_form" id="couponForm" action='' method="post" novalidate="novalidate" >
+                        <div class="cupon_area">
+                            <div class="check_title">
+                                <h2>Have a coupon? <a href="#">Click here to see Coupons</a>
+                                </h2>
+                            </div>
+                            <input type="text" name="coupon" placeholder="Enter coupon code">
+                            <button class="tp_btn" type="submit">Apply Coupon</button>
+                    </form>
+                </div>
+                <div class="alert alert-success" id="successAlert" role="alert" hidden>
+                    This is a success alert—check it out!
+                </div>
+                <div id="failedAlert" class="alert alert-danger" role="alert" hidden>
+                    Invalid / Expired Coupon
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <h3>Billing Details</h3>
+                <form class="row contact_form" id="checkoutForm" action="#" method="post" novalidate="novalidate">
                     <div class="accordion mt-5" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
@@ -20,14 +64,18 @@
                                 <div class="accordion-body">
                                     <div class="card-body p-0">
                                         <div class="col-sm-12">
-
+                                            {{#if addressZero}}
+                                            NO Address
+                                            {{/if}}
                                             {{#each address}}
-                                          
+
                                             <div class="col-md-12">
-                                                
+
                                                 <div class="card-body">
-                                                    <h6><input class="form-check-input" type="radio" name="flexRadioDefault"
-                                                    value="{{this.key}}" id="flexRadioDefault1" checked/>Address {{inc @index}}</h6>
+                                                    <h6><input class="form-check-input" type="radio"
+                                                            name="flexRadioDefault" value="{{this.key}}"
+                                                            id="flexRadioDefault1" checked />Address {{inc @index}}
+                                                    </h6>
                                                     <hr class="mt-0 mb-4">
                                                     <div class="row">
                                                         <div class="col-2 mb-3">
@@ -54,11 +102,12 @@
 
                                                         <div class="col-2 mb-3">
                                                             <p>Address:</p>
-                                                            
+
                                                         </div>
                                                         <div class="col-4 mb-3">
-                                                            <p class="text-muted">{{this.address1}},{{this.address2}}</p>
-                                                            
+                                                            <p class="text-muted">
+                                                                {{this.address1}},{{this.address2}}</p>
+
                                                         </div>
 
                                                         <div class="col-2 mb-3">
@@ -68,9 +117,9 @@
                                                         </div>
                                                         <div class="col-4 mb-3">
                                                             <p class="text-muted">{{this.town}}</p>
-                                                           <p class="text-muted">{{this.zip}}</p>
+                                                            <p class="text-muted">{{this.zip}}</p>
                                                         </div>
-                                                        
+
 
                                                     </div>
                                                     <hr class="mt-0 mb-4">
@@ -103,49 +152,50 @@
                                     <div class="card-body p-0">
                                         <div class="col-sm-12">
 
-                                           
-                                                <div class="col-md-6 form-group p_star">
-                                                    <input type="text" class="form-control" placeholder="First name"
-                                                        id="first" name="fname">
-                                                </div>
-                                                <div class="col-md-6 form-group p_star">
-                                                    <input type="text" class="form-control" placeholder="Last name"
-                                                        id="last" name="lname">
-                                                </div>
-                                                <div class="col-md-6 form-group p_star">
-                                                    <input type="text" class="form-control" placeholder="Phone number"
-                                                        id="number" name="mobile">
-                                                </div>
-                                                <div class="col-md-6 form-group p_star">
-                                                    <input type="text" class="form-control" placeholder="Email Address"
-                                                        id="email" name="email">
-                                                </div>
-                                                <div class="col-md-12 form-group p_star">
-                                                    <input type="text" class="form-control"
-                                                        placeholder="Address line 01" id="add1" name="address1">
-                                                </div>
-                                                <div class="col-md-12 form-group p_star">
-                                                    <input type="text" class="form-control"
-                                                        placeholder="Address line 02" id="add2" name="address2">
-                                                </div>
 
-                                                <div class="col-md-6 form-group p_star">
-                                                    <input type="text" class="form-control" placeholder="Town/City"
-                                                        id="city" name="town">
-                                                </div>
-                                                <div class="col-md-6 form-group">
-                                                    <input type="text" class="form-control" id="zip" name="zip"
-                                                        placeholder="Postcode/ZIP">
-                                                </div>
+                                            <div class="col-md-6 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="First name"
+                                                    id="first" name="fname">
+                                            </div>
+                                            <div class="col-md-6 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Last name"
+                                                    id="last" name="lname">
+                                            </div>
+                                            <div class="col-md-6 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Phone number"
+                                                    id="number" name="mobile">
+                                            </div>
+                                            <div class="col-md-6 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Email Address"
+                                                    id="email" name="email">
+                                            </div>
+                                            <div class="col-md-12 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Address line 01"
+                                                    id="add1" name="address1">
+                                            </div>
+                                            <div class="col-md-12 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Address line 02"
+                                                    id="add2" name="address2">
+                                            </div>
 
-                                                <div class="col-md-6 form-group p_star">
+                                            <div class="col-md-6 form-group p_star">
+                                                <input type="text" class="form-control" placeholder="Town/City"
+                                                    id="city" name="town">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <input type="text" class="form-control" id="zip" name="zip"
+                                                    placeholder="Postcode/ZIP">
+                                            </div>
 
-                                                </div>
-                                                <div class="col-md-6 form-group">
-                                                    <input class="form-check-input" type="radio" name="flexRadioDefault"
-                                                        value="new" id="flexRadioDefault0" />
-                                                        Proceed With This Address <br> <small>(Also auto saves this address for further orders)</small>
-                                                </div>
+                                            <div class="col-md-6 form-group p_star">
+
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                    value="new" id="flexRadioDefault0" />
+                                                Proceed With This Address <br> <small>(Also auto saves this address
+                                                    for further orders)</small>
+                                            </div>
 
 
                                         </div>
@@ -159,80 +209,163 @@
 
 
 
-                    <div class="cupon_area mt-5">
+                    {{!-- <div class="cupon_area mt-5">
                         <div class="check_title">
                             <h2>Have a coupon? <a href="#">Click here to enter your code</a>
                             </h2>
                         </div>
                         <input type="text" name="coupon" placeholder="Enter coupon code">
                         <a class="tp_btn" href="#">Apply Coupon</a>
+                    </div> --}}
+
+            </div>
+
+            <div class="col-lg-4">
+                <div class="order_box">
+                    <h2>Your Order</h2>
+                    <ul class="list">
+                        <li><a href="#">Product <span>Total </span></a></li>
+                        {{#each products}}
+                        <li><a href="#">{{this.name}}<span class="middle">
+                                    <p id="productQty{{this.item}}" hidden>{{this.quantity}}</p>x {{this.quantity}}
+                                </span> <span class="last">$<span id="productTotal{{this.item}}"></span></span></a>
+                        </li>
+                        <p id="itemTotal{{this.item}}" hidden>{{this.product.price}}</p>
+                        {{/each}}
+
+                        {{!-- <li><a href="#">Fresh Tomatoes <span class="middle">x 02</span> <span
+                                    class="last">$720.00</span></a></li>
+                        <li><a href="#">Fresh Brocoli <span class="middle">x 02</span> <span
+                                    class="last">$720.00</span></a></li> --}}
+                    </ul>
+                    <ul class="list list_2">
+                        <li><a href="#">Subtotal <span>${{productsNetAmount}}.00</span></a></li>
+                        <li id="couponDiscount" hidden><a href="#">Coupon Discount <span>${{productsNetAmount}}.00</span></a></li>
+                        <li><a href="#">Shipping <span>Free: 00.00</span></a></li>
+                        <li id="originalTotal"><a href="#">Total <span>${{productsNetAmount}}.00</span></a></li>
+                        <li id="finalPrice" hidden><a href="#">Total <span>${{productsNetAmount}}.00</span></a></li>
+                    </ul>
+                    <div class="payment_item">
+                        <div class="radion_btn">
+                            <input type="radio" id="f-option5" name="selector" value="COD">
+                            <label for="f-option5">Cash On delivery</label>
+                            <div class="check"></div>
+                        </div>
+                        <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
+                            Store Postcode.</p>
+                    </div>
+                    <div class="payment_item active">
+                        <div class="radion_btn">
+                            <input type="radio" id="f-option6" name="selector" value="paypal">
+                            <label for="f-option6">Paypal </label>
+                            <img src="../images/img/product/card.jpg" alt="">
+                            <div class="check"></div>
+                        </div>
+                        <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                            account.</p>
+                    </div>
+                    <div class="payment_item">
+                        <div class="radion_btn">
+                            <input type="radio" id="f-option7" name="selector" value="razorpay">
+                            <label for="f-option7">RazorPay </label>
+                            <img src="../images/img/product/card.jpg" alt="">
+                            <div class="check"></div>
+                        </div>
+                        <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                            account.</p>
                     </div>
 
-                </div>
+                    {{!-- Wallet --}}
 
-                <div class="col-lg-4">
-                    <div class="order_box">
-                        <h2>Your Order</h2>
-                        <ul class="list">
-                            <li><a href="#">Product <span>Total</span></a></li>
-                            <li><a href="#">Fresh Blackberry <span class="middle">x 02</span> <span
-                                        class="last">$720.00</span></a></li>
-                            <li><a href="#">Fresh Tomatoes <span class="middle">x 02</span> <span
-                                        class="last">$720.00</span></a></li>
-                            <li><a href="#">Fresh Brocoli <span class="middle">x 02</span> <span
-                                        class="last">$720.00</span></a></li>
-                        </ul>
-                        <ul class="list list_2">
-                            <li><a href="#">Subtotal <span>${{productsNetAmount}}.00</span></a></li>
-                            <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
-                            <li><a href="#">Total <span>$2210.00</span></a></li>
-                        </ul>
-                        <div class="payment_item">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option5" name="selector" value="COD">
-                                <label for="f-option5">Cash On delivery</label>
-                                <div class="check"></div>
-                            </div>
-                            <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
-                                Store Postcode.</p>
+
+                    {{#if proceedWallet}}
+                    <div class="payment_item">
+                        <div class="radion_btn">
+                            <input type="radio" id="f-option8" name="selector" value="wallet">
+                            <label for="f-option8">wallet</label>
+                            <label style="position: absolute; right:40px; top:0px;">Balance :
+                                ${{wallet.amount}}.00</label>
+
+
+                            <div class="check"></div>
                         </div>
-                        <div class="payment_item active">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option6" name="selector" value="paypal">
-                                <label for="f-option6">Paypal </label>
-                                <img src="../images/img/product/card.jpg" alt="">
-                                <div class="check"></div>
-                            </div>
-                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
-                                account.</p>
-                        </div>
-                        <div class="payment_item">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option7" name="selector" value="razorpay">
-                                <label for="f-option7">RazorPay </label>
-                                <img src="../images/img/product/card.jpg" alt="">
-                                <div class="check"></div>
-                            </div>
-                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
-                                account.</p>
-                        </div>
-                        <div class="creat_account">
-                            <input type="checkbox" id="f-option4" name="checkbox">
-                            <label for="f-option4">I’ve read and accept the </label>
-                            <a href="#">terms & conditions*</a>
-                        </div>
-                        <input type="text" name="userID" value="{{user._id}}" hidden>
-                        <button type="submit" class="primary-btn">Proceed to Payment</button>
-                        </form>
+                        <p>Pay with your bSHOPE wallet and get intsant cashbacks and offers</p>
                     </div>
+                    {{else}}
+                    <div class="payment_item">
+                        <div class="radion_btn">
+                            <input type="radio" id="f-option8" name="selector" value="wallet" disabled>
+                            <label style="color:rgb(130, 126, 126) !important;" for="f-option8 ">wallet</label>
+                            <label style="position: absolute; right:40px; top:0px; color:rgb(236, 135, 135)">Balance
+                                :
+                                ${{wallet.amount}}.00</label>
+
+
+                            <div class="check"></div>
+                        </div>
+                        <p style="color:rgb(222, 52, 52); font-size:12px ">Your Wallet has insufficent amount to buy
+                            this Item .
+                            <a>Add money to Wallet.</a>
+                        </p>
+                    </div>
+                    {{/if}}
+
+
+                    <div class="creat_account">
+                        <input type="checkbox" id="f-option4" name="checkbox">
+                        <label for="f-option4">I’ve read and accept the </label>
+                        <a href="#">terms & conditions*</a>
+                    </div>
+                    <input type="text" name="userID" value="{{user._id}}" hidden>
+                    <input id="couponInput" type="text" name="coupon" value="" hidden>
+                    <button type="submit" class="primary-btn">Proceed to Payment</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </section>
 <!--================End Checkout Area =================-->
 
 <script>
+    $("#couponForm").submit((e) => {
+        console.log('clicked')
+        e.preventDefault()
+        $.ajax({
+            url: '/claim-coupon',
+            method: 'post',
+            data: $('#couponForm').serialize(),
+            success: (response) => {
+                if (response.success) {
+                    document.getElementById("successAlert").innerHTML=`<b>${response.coupon}</b> Applied! <u><a class="ml-5 text-danger" href="/proceed-to-checkout">Cancel Coupon</a></u>`
+                    document.getElementById("couponForm").setAttribute("hidden", "");
+                    $("#successAlert").removeAttr("hidden")
+                    $("#couponDiscount").removeAttr("hidden")
+                    $("#finalPrice").removeAttr("hidden")
+
+                    document.getElementById("couponInput").value=response.coupon
+                    document.getElementById("finalPrice").innerHTML=`<a href="#">Total <span>$${response.finalAmount}</span></a>`;
+                    document.getElementById("couponDiscount").innerHTML=`<a href="#">Coupon Discount <span>-${response.discountDeduction}</span></a>`;
+                    document.getElementById("originalTotal").setAttribute("hidden", "");
+
+                    console.log(response.discount)
+                    
+ alertify.set('notifier','position', 'top-left');
+ alertify.success("Bingo! Coupon Applied");
+
+                }
+                else {
+                    alertify.set('notifier','position', 'top-left');
+ alertify.error("Coud not apply Coupon!");
+                    $("#failedAlert").removeAttr("hidden")
+                    
+                }
+
+            }
+        })
+    })
+
 
     $("#checkoutForm").submit((e) => {
         e.preventDefault()
@@ -241,12 +374,19 @@
             method: 'post',
             data: $('#checkoutForm').serialize(),
             success: (response) => {
+                console.log(response, 'response')
                 if (response.COD_Success) {
                     location.href = '/order-success'
-                } else {
+
+                }
+                if (response.razorpayMethod) {
                     razorpayPayment(response)
                     console.log(response)
-                    console.log('function called')
+                    console.log('razorpay called')
+                }
+                if (response.readyToRedirect) {
+                    console.log(response.redirectLink, 'reachedhere')
+                    location.replace(response.redirectLink)
                 }
             }
         })
@@ -297,8 +437,19 @@
             success: (response) => {
                 if (response.Razor_status) {
                     location.href = '/order-success'
+
                 }
             }
         })
     }
+
+
+    {{#each products}}
+    let itemTotal{{this.item}}=document.getElementById('itemTotal{{this.item}}').innerText
+    let qty{{this.item}}=document.getElementById('productQty{{this.item}}').innerText
+    let totalAmount{{this.item}}=parseInt(qty{{this.item}}) * parseInt(itemTotal{{this.item}}) + '.00'
+    document.getElementById('productTotal{{this.item}}').innerText = totalAmount{{this.item}}
+    console.log(totalAmount{{ this.item }})
+    {{/each}}
+
 </script>
