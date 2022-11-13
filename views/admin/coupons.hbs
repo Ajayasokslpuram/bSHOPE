@@ -66,5 +66,49 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="col-lg-10 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="page-title m-3">All Coupons</h3>
+                        <table class="table  align-middle mb-0 bg-white mb-5">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Coupon Code</th>
+                                    <th>Discount %</th>
+
+                                    <th>Expiry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each coupons}}
+                                <tr>
+
+                                    <td>
+                                        <p class="fw-bold mb-1">{{this.coupon}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-bold mb-1">{{this.discount}}</p>
+                                    </td>
+                                    <td>
+                                        {{this.expiry}}
+                                    </td>
+
+                                    <td>
+                                        
+                                        <a href="#" class="btn btn-sm btn-rounded"
+                                            onclick="return confirm('Do You Want to Delete {{this.name}}?')">
+                                            Remove
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>

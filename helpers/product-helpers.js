@@ -16,6 +16,12 @@ module.exports = {
             callback(data.insertedId)
         })
     },
+    getPaginatedProducts: (skip, limit) => {
+        return new Promise(async (resolve, reject) => {
+            let products = await db.get().collection(collectionNames.PRODUCT_COLLECTION).find().skip(skip).limit(limit).toArray()
+            resolve(products)
+        })
+    },
     getAllProducts: () => {
         return new Promise(async (resolve, reject) => {
             let products = await db.get().collection(collectionNames.PRODUCT_COLLECTION).find().toArray()
@@ -51,6 +57,7 @@ module.exports = {
             db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({ _id: objectId(productId) }, {
                 $set: {
                     name: productDetails.name,
+                    quantity: productDetails.quantity,
                     price: productDetails.price,
                     description: productDetails.description,
                     category: productDetails.category
@@ -65,10 +72,22 @@ module.exports = {
 
     /*===================================== C A T E G O R I E S ===================================*/
 
-    addCategory: (category, callback) => {
-        db.get().collection(collectionNames.CATEGORY_COLLECTION).insertOne(category).then((data) => {
-            callback(data.insertedId + 'Category id')
+    addCategory: (category) => {
+        return new Promise(async (resolve, reject) => {
+            let dupeCat = await db.get().collection(collectionNames.CATEGORY_COLLECTION).findOne({ name: { $regex: category.name, $options: "$i" } })
+            if (dupeCat) {
+                console.log(dupeCat)
+                reject(dupeCat)
+            }
+            else {
+                db.get().collection(collectionNames.CATEGORY_COLLECTION).insertOne(category).then(() => {
+                 
+                })
+                resolve()
+            }
+
         })
+
     },
     deleteCategory: (categoryId) => {
         return new Promise(async (resolve, reject) => {
@@ -91,6 +110,12 @@ module.exports = {
                 }
 
             })
+        })
+    },
+    getProductCount: () => {
+        return new Promise(async (resolve, reject) => {
+            let count = await db.get().collection(collectionNames.PRODUCT_COLLECTION).countDocuments()
+            resolve(count)
         })
     },
     getAllCategories: () => {
@@ -129,16 +154,38 @@ module.exports = {
     },
     /*===================================B A N N E R S=============================================*/
 
-    addBanner: (banner, callback) => {
-        db.get().collection(collectionNames.BANNER_COLLECTION).insertOne(banner).then((data) => {
-            console.log(data.insertedId)
-            callback(data.insertedId)
-        }
-        )
-
+    addBanner: (bannerData) => {
+        bannerData.isActive = false;
+        return new Promise(async (resolve, reject) => {
+            db.get().collection(collectionNames.BANNER_COLLECTION).insertOne(bannerData).then((data) => {
+                resolve(data)
+            })
+        })
+    },
+    getAllBanners: () => {
+        return new Promise(async (resolve, reject) => {
+            let banners = await db.get().collection(collectionNames.BANNER_COLLECTION).find().toArray()
+            resolve(banners)
+        })
+    },
+    setBanner: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await db.get().collection(collectionNames.BANNER_COLLECTION).updateMany({}, {
+                $set: { isActive: false }
+            }, { multi: true })
+            await db.get().collection(collectionNames.BANNER_COLLECTION).updateOne({ _id: objectId(id) }, {
+                $set: { isActive: true }
+            })
+            resolve()
+        })
 
     },
-
+    getActiveBanner: () => {
+        return new Promise(async (resolve, reject) => {
+            banner = await db.get().collection(collectionNames.BANNER_COLLECTION).find({ isActive: true }).toArray()
+            resolve(banner[0])
+        })
+    },
 
     /*===================================== U S E R S ===================================*/
 
@@ -192,7 +239,33 @@ module.exports = {
     getInsights: () => {
         return new Promise(async (resolve, reject) => {
             let placed = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { status: "Placed" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$status", 'Placed'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group:
@@ -200,7 +273,33 @@ module.exports = {
             }]).toArray()
 
             let delivered = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { status: "Delivered" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$status", 'Delivered'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group:
@@ -208,7 +307,33 @@ module.exports = {
             }]).toArray()
 
             let canceled = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { status: "Canceled" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$status", 'Canceled'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group:
@@ -219,32 +344,78 @@ module.exports = {
 
 
 
-            placedCount = placed[0].count
-            deliveredCount = delivered[0].count
-            canceledCount = canceled[0].count
-            month = placed[0]._id.month
+            if (placed.length >= 1) {
+                placedCount = placed[0].count
+
+            } else {
+                placedCount = 0
+
+            }
+            if (delivered.length >= 1) {
+                deliveredCount = delivered[0].count
+
+            }
+            else {
+                deliveredCount = 0;
+            }
+            if (canceled.length >= 1) {
+                canceledCount = canceled[0].count
+            }
+            else {
+                canceledCount = 0
+            }
+
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            date = new Date()
+            let month = months[date.getMonth()]
+
 
             let resolveObject = {}
             resolveObject.barData = [placedCount, deliveredCount, canceledCount]
+            resolveObject.month = month
 
 
-            let totalAamount = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([
-                {
-                    $group: {
-                        _id: {
-                            month: {
-                                $month: { $toDate: "$date" }
+            let totalAamount = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
                             },
-                            year: {
-                                $year: { $toDate: "$date" }
-                            }
-                        },
-                        total: {
-                            $sum: "$productsNetAmount"
-                        },
-
+                        ]
                     }
-                },
+                }
+            },
+            {
+
+                $group: {
+                    _id: {
+                        month: {
+                            $month: { $toDate: "$date" }
+                        },
+                        year: {
+                            $year: { $toDate: "$date" }
+                        }
+                    },
+                    total: {
+                        $sum: "$productsNetAmount"
+                    },
+
+                }
+            },
 
             ]).toArray()
 
@@ -255,7 +426,83 @@ module.exports = {
 
 
             let codTotal = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { paymentMethod: "COD" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$paymentMethod", 'COD'
+                                ]
+                            },
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: {
+                            $month: { $toDate: "$date" }
+                        },
+                        year: {
+                            $year: { $toDate: "$date" }
+                        }
+                    },
+                    total: {
+                        $sum: "$productsNetAmount"
+                    },
+
+                }
+            },
+
+            ]).toArray()
+            console.log(codTotal, 'cod');
+            resolveObject.codTotal = codTotal[0].total
+
+            let walletTotal = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$paymentMethod", 'wallet'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group: {
@@ -276,10 +523,36 @@ module.exports = {
 
             ]).toArray()
 
-            console.log(codTotal)
-            resolveObject.codTotal = codTotal[0].total
+            resolveObject.walletTotal = walletTotal[0].total
+
             let payPalTotal = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { paymentMethod: "paypal" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$paymentMethod", 'paypal'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group: {
@@ -303,7 +576,33 @@ module.exports = {
             resolveObject.payPalTotal = payPalTotal[0].total
 
             let razorPayTotal = await db.get().collection(collectionNames.ORDER_COLLLECTION).aggregate([{
-                $match: { paymentMethod: "razorpay" }
+                $match: {
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: { $toDate: "$date" }
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: 0
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    "$paymentMethod", 'razorpay'
+                                ]
+                            },
+                        ]
+                    }
+                }
             },
             {
                 $group: {
@@ -335,9 +634,7 @@ module.exports = {
                         && this.createdOn.getMonth() === lastMonthDate.getMonth();
                 }
             }).toArray()
-            console.log(monthSales, 'monthsales')
-
-            resolveObject.monthSales = monthSales
+            resolveObject.monthSales = monthSales.reverse()
             resolve(resolveObject)
         })
 
@@ -363,6 +660,18 @@ module.exports = {
             })
         })
     },
+    getAllCoupons: (limit) => {
+        return new Promise(async (resolve, reject) => {
+            let coupons = await db.get().collection(collectionNames.COUPON_COLLECTION).find().limit(limit).toArray()
+            if (coupons) {
+                resolve(coupons)
+            }
+            else {
+                reject()
+            }
+
+        })
+    },
     createCategoryOffer: (offerData) => {
         return new Promise(async (resolve, reject) => {
             await db.get().collection(collectionNames.OFFER_COLLECTION).insertOne(offerData).then((data) => {
@@ -374,6 +683,16 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let offer = await db.get().collection(collectionNames.OFFER_COLLECTION).findOne({ _id: objectId(offerID) })
 
+            await db.get().collection(collectionNames.PRODUCT_COLLECTION).update({ category: offer.category }, [{
+                $set: {
+                    price: "$MRP"
+                }
+            }
+            ], { multi: true }).then((data) => {
+                console.log(data, "updated")
+            }).catch((err) => {
+                console.log(err)
+            })
             // applying offer to category
             await db.get().collection(collectionNames.PRODUCT_COLLECTION).update({ category: offer.category }, [{
                 $set: {
@@ -399,19 +718,19 @@ module.exports = {
             }
             ], { multi: true }).then((data) => {
                 console.log(data, "updated")
-               
+
             }).catch((err) => {
                 console.log(err)
             })
-           await db.get().collection(collectionNames.OFFER_COLLECTION).updateOne({_id:objectId(offerID)},{
-                $set:{offerApplied:true}
+            await db.get().collection(collectionNames.OFFER_COLLECTION).updateOne({ _id: objectId(offerID) }, {
+                $set: { offerApplied: true }
             })
             resolve()
         })
     },
     getCategoryOffers: () => {
         return new Promise(async (resolve, reject) => {
-            let offers = await db.get().collection(collectionNames.OFFER_COLLECTION).find({offerType:"category"}).toArray()
+            let offers = await db.get().collection(collectionNames.OFFER_COLLECTION).find({ offerType: "category" }).toArray()
             resolve(offers)
         })
     },
@@ -423,24 +742,7 @@ module.exports = {
             // reversing Product Price
             await db.get().collection(collectionNames.PRODUCT_COLLECTION).update({ category: offer.category }, [{
                 $set: {
-                    price: {
-                        $ceil: {
-                            $add: [
-                                "$price",
-                                {
-                                    $multiply: [
-                                        {
-                                            $divide: [
-                                                "$MRP",
-                                                100
-                                            ]
-                                        },
-                                        offer.discount
-                                    ]
-                                }
-                            ]
-                        }
-                    }
+                    price: "$MRP"
                 }
             }
             ], { multi: true }).then((data) => {
@@ -449,57 +751,64 @@ module.exports = {
                 console.log(err)
             })
 
-            await db.get().collection(collectionNames.OFFER_COLLECTION).deleteOne({_id:objectId(offerID)})
+            await db.get().collection(collectionNames.OFFER_COLLECTION).deleteOne({ _id: objectId(offerID) })
 
             resolve()
         })
     },
-    createProductOffer:(offerData)=>{
-        return new Promise(async(resolve,reject)=>{
-            db.get().collection(collectionNames.OFFER_COLLECTION).insertOne(offerData).then(()=>{
+    createProductOffer: (offerData) => {
+        return new Promise(async (resolve, reject) => {
+            db.get().collection(collectionNames.OFFER_COLLECTION).insertOne(offerData).then(() => {
                 resolve()
             })
         })
     },
-    getProductOffers:()=>{
-        return new Promise(async(resolve,reject)=>{
-         let offers=await   db.get().collection(collectionNames.OFFER_COLLECTION).find({offerType:"product"}).toArray()
-         resolve(offers)
+    getProductOffers: () => {
+        return new Promise(async (resolve, reject) => {
+            let offers = await db.get().collection(collectionNames.OFFER_COLLECTION).find({ offerType: "product" }).toArray()
+            resolve(offers)
         })
     },
-    applyProductOffer:(offerID,productID)=>{
-        console.log(offerID,productID,'helpers')
-        return new Promise(async(resolve,reject)=>{
-           let offer=await db.get().collection(collectionNames.OFFER_COLLECTION).findOne({_id:objectId(offerID)})
-           let product=await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({_id:objectId(productID)})
-            let offerPrice=Math.floor((product.MRP/100)*offer.discount)
-            console.log(offerPrice,'offerPrice')
-            await db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({_id:objectId(productID)},{
-                $set:{
-                    price:product.MRP
+    applyProductOffer: (offerID, productID) => {
+        console.log(offerID, productID, 'helpers')
+        return new Promise(async (resolve, reject) => {
+            let offer = await db.get().collection(collectionNames.OFFER_COLLECTION).findOne({ _id: objectId(offerID) })
+            let product = await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({ _id: objectId(productID) })
+            let offerPrice = Math.floor((product.MRP / 100) * offer.discount)
+            console.log(offerPrice, 'offerPrice')
+            await db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({ _id: objectId(productID) }, {
+                $set: {
+                    price: product.MRP
                 }
-            }).then((data)=>{
+            }).then((data) => {
                 console.log(data)
             })
-           await db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({_id:objectId(productID)},{
-                $inc:{
-                    price:-offerPrice
+            await db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({ _id: objectId(productID) }, {
+                $inc: {
+                    price: -offerPrice
                 }
-            }).then((data)=>{
+            }).then((data) => {
                 console.log(data)
             })
             resolve()
         })
     },
-    removeProductOffer:(productID)=>{
-        return new Promise(async(resolve,reject)=>{
-            let product=await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({_id:objectId(productID)})
-            db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({_id:objectId(productID)},{
-                $set:{
-                    price:product.MRP
+    removeProductOffer: (productID) => {
+        return new Promise(async (resolve, reject) => {
+            let product = await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({ _id: objectId(productID) })
+            db.get().collection(collectionNames.PRODUCT_COLLECTION).updateOne({ _id: objectId(productID) }, {
+                $set: {
+                    price: product.MRP
                 }
             })
             resolve()
+        })
+    },
+    getProductQuantity: (details) => {
+        return new Promise(async (resolve, reject) => {
+            let product = await db.get().collection(collectionNames.PRODUCT_COLLECTION).findOne({ _id: objectId(details.product) })
+            let availableQty = product.quantity
+            resolve(availableQty)
         })
     }
 

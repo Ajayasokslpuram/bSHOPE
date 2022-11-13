@@ -1,34 +1,23 @@
 
-<!-- JavaScript -->
-<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-
-<!-- CSS -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-<!-- Default theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
-<!-- Semantic UI theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
-<!-- Bootstrap theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
-
-<!-- 
-    RTL version
--->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.rtl.min.css"/>
-<!-- Default theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.rtl.min.css"/>
-<!-- Semantic UI theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.rtl.min.css"/>
-<!-- Bootstrap theme -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.rtl.min.css"/>
 
 <!--================Checkout Area =================-->
 <section class="checkout_area section_gap">
     <div class="container">
         <div class="billing_details">
             <div class="row">
+                <div class="col-md-8">
+                    <hr>
+                    <div class="row">{{#each coupons}}
+                        <div class="alert alert-success  col-md-5 ml-3" role="alert">
+                            <small>Apply</small> <b style="color:black;">{{this.coupon}} </b><small>to get flat</small><b style="color:brown"> {{this.discount}}%</b> <small>Discount</small>
+                        </div>
+                        {{/each}}
+                    </div>
+
+
+                </div>
                 <div class="col-md-4 ml-auto">
-                    <form class="row contact_form" id="couponForm" action='' method="post" novalidate="novalidate" >
+                    <form class="row contact_form" id="couponForm" action='' method="post" novalidate="novalidate">
                         <div class="cupon_area">
                             <div class="check_title">
                                 <h2>Have a coupon? <a href="#">Click here to see Coupons</a>
@@ -48,9 +37,10 @@
         </div>
         <div class="row">
             <div class="col-lg-8">
-                <h3>Billing Details</h3>
+                <h3 class="mt-5">Billing Details</h3>
+                <h6 id="err" style="color:red;"></h6>
                 <form class="row contact_form" id="checkoutForm" action="#" method="post" novalidate="novalidate">
-                    <div class="accordion mt-5" id="accordionExample">
+                    <div class="accordion mt-2" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
                                 <button class="accordion-button " type="button" data-mdb-toggle="collapse"
@@ -65,6 +55,8 @@
                                     <div class="card-body p-0">
                                         <div class="col-sm-12">
                                             {{#if addressZero}}
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                value="" id="flexRadioDefault1" hidden />
                                             NO Address
                                             {{/if}}
                                             {{#each address}}
@@ -191,8 +183,8 @@
 
                                             </div>
                                             <div class="col-md-6 form-group">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault"
-                                                    value="new" id="flexRadioDefault0" />
+                                                <input class="form-check-input" onclick="validateAddress()" type="radio"
+                                                    name="flexRadioDefault" value="new" id="flexRadioDefault0" />
                                                 Proceed With This Address <br> <small>(Also auto saves this address
                                                     for further orders)</small>
                                             </div>
@@ -240,14 +232,15 @@
                     </ul>
                     <ul class="list list_2">
                         <li><a href="#">Subtotal <span>${{productsNetAmount}}.00</span></a></li>
-                        <li id="couponDiscount" hidden><a href="#">Coupon Discount <span>${{productsNetAmount}}.00</span></a></li>
+                        <li id="couponDiscount" hidden><a href="#">Coupon Discount
+                                <span>${{productsNetAmount}}.00</span></a></li>
                         <li><a href="#">Shipping <span>Free: 00.00</span></a></li>
                         <li id="originalTotal"><a href="#">Total <span>${{productsNetAmount}}.00</span></a></li>
                         <li id="finalPrice" hidden><a href="#">Total <span>${{productsNetAmount}}.00</span></a></li>
                     </ul>
                     <div class="payment_item">
                         <div class="radion_btn">
-                            <input type="radio" id="f-option5" name="selector" value="COD">
+                            <input type="radio" id="f-option5" name="selector" value="COD" checked>
                             <label for="f-option5">Cash On delivery</label>
                             <div class="check"></div>
                         </div>
@@ -338,58 +331,142 @@
             data: $('#couponForm').serialize(),
             success: (response) => {
                 if (response.success) {
-                    document.getElementById("successAlert").innerHTML=`<b>${response.coupon}</b> Applied! <u><a class="ml-5 text-danger" href="/proceed-to-checkout">Cancel Coupon</a></u>`
+                    document.getElementById("successAlert").innerHTML = `<b>${response.coupon}</b> Applied! <u><a class="ml-5 text-danger" href="/proceed-to-checkout">Cancel Coupon</a></u>`
                     document.getElementById("couponForm").setAttribute("hidden", "");
                     $("#successAlert").removeAttr("hidden")
                     $("#couponDiscount").removeAttr("hidden")
                     $("#finalPrice").removeAttr("hidden")
 
-                    document.getElementById("couponInput").value=response.coupon
-                    document.getElementById("finalPrice").innerHTML=`<a href="#">Total <span>$${response.finalAmount}</span></a>`;
-                    document.getElementById("couponDiscount").innerHTML=`<a href="#">Coupon Discount <span>-${response.discountDeduction}</span></a>`;
+                    document.getElementById("couponInput").value = response.coupon
+                    document.getElementById("finalPrice").innerHTML = `<a href="#">Total <span>$${response.finalAmount}</span></a>`;
+                    document.getElementById("couponDiscount").innerHTML = `<a href="#">Coupon Discount <span>-${response.discountDeduction}</span></a>`;
                     document.getElementById("originalTotal").setAttribute("hidden", "");
 
                     console.log(response.discount)
-                    
- alertify.set('notifier','position', 'top-left');
- alertify.success("Bingo! Coupon Applied");
+
+                    alertify.set('notifier', 'position', 'top-left');
+                    alertify.success("Bingo! Coupon Applied");
 
                 }
                 else {
-                    alertify.set('notifier','position', 'top-left');
- alertify.error("Coud not apply Coupon!");
+                    alertify.set('notifier', 'position', 'top-left');
+                    alertify.error("Coud not apply Coupon!");
                     $("#failedAlert").removeAttr("hidden")
-                    
+
                 }
 
             }
         })
     })
 
+    function validateAddress(e) {
+        const radio = document.getElementById('flexRadioDefault0')
+        const zip = document.getElementById('zip')
+        const city = document.getElementById('city')
+        const first = document.getElementById('first')
+        const last = document.getElementById('last')
+        const number = document.getElementById('number')
+        const email = document.getElementById('email')
+        const add1 = document.getElementById('add1')
+        const add2 = document.getElementById('add2')
+        if (first.value === '') {
+            $('#first').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (last.value === '') {
+            $('#last').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (zip.value === '') {
+            $('#zip').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (city.value === '') {
+            $('#city').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (email.value === '') {
+            $('#email').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (number.value === '') {
+            $('#number').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (add1.value === '') {
+            $('#add1').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+        if (add2.value === '') {
+            $('#add2').css({
+                "border-color": "red"
+            })
+            radio.checked = false;
+
+        }
+
+    }
+
 
     $("#checkoutForm").submit((e) => {
-        e.preventDefault()
-        $.ajax({
-            url: '/place-order',
-            method: 'post',
-            data: $('#checkoutForm').serialize(),
-            success: (response) => {
-                console.log(response, 'response')
-                if (response.COD_Success) {
-                    location.href = '/order-success'
 
+        const addressSaved = document.getElementById('flexRadioDefault1')
+        const newAddress = document.getElementById('flexRadioDefault0')
+        //New Address
+
+        const err = document.getElementById("err")
+
+        if (addressSaved.checked === false && newAddress.checked === false) {
+            e.preventDefault()
+            err.innerText = 'Address Not Selected!'
+        }
+
+        else {
+            e.preventDefault()
+            $.ajax({
+                url: '/place-order',
+                method: 'post',
+                data: $('#checkoutForm').serialize(),
+                success: (response) => {
+                    console.log(response, 'response')
+                    if (response.COD_Success) {
+                        location.href = '/order-success'
+
+                    }
+                    if (response.razorpayMethod) {
+                        razorpayPayment(response)
+                        console.log(response)
+                        console.log('razorpay called')
+                    }
+                    if (response.readyToRedirect) {
+                        console.log(response.redirectLink, 'reachedhere')
+                        location.replace(response.redirectLink)
+                    }
                 }
-                if (response.razorpayMethod) {
-                    razorpayPayment(response)
-                    console.log(response)
-                    console.log('razorpay called')
-                }
-                if (response.readyToRedirect) {
-                    console.log(response.redirectLink, 'reachedhere')
-                    location.replace(response.redirectLink)
-                }
-            }
-        })
+            })
+        }
+
     })
 
     function razorpayPayment(order) {

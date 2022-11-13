@@ -1,112 +1,152 @@
 <!-- Start Banner Area -->
-	<!-- start banner Area -->
-	<section class="banner-area">
-		<div class="container">
-			<div class="row fullscreen align-items-center justify-content-start">
-				<div class="col-lg-12">
-					<div class="active-banner-slider owl-carousel">
-						<!-- single-slide -->
-						<div class="row single-slide align-items-center d-flex">
-							<div class="col-lg-5 col-md-6">
-								<div class="banner-content">
-									<h1>Nike New <br>Collection!</h1>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-										dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-									<div class="add-bag d-flex align-items-center">
-										<a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
-										<span class="add-text text-uppercase">Add to Bag</span>
-									</div>
+<!-- start banner Area -->
+<script src="/javascripts/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<section class="banner-area">
+	<div class="container">
+		<div class="row fullscreen align-items-center justify-content-start">
+			<div class="col-lg-12">
+				<div class="active-banner-slider owl-carousel">
+					<!-- single-slide -->
+					<div class="row single-slide align-items-center d-flex">
+						<div class="col-lg-5 col-md-6">
+							{{#if banner}}
+							<div class="banner-content">
+								<h1>{{banner.category}} New<br>Collection!</h1>
+								<p>{{banner.description}}</p>
+								<div class="add-bag d-flex align-items-center">
+									<a class="add-btn" href="/shop-by-category/{{banner.category}}"><span class="lnr lnr-arrow-right"></span></a>
+									<span class="add-text text-uppercase">View More</span>
 								</div>
 							</div>
-							<div class="col-lg-7">
-								<div class="banner-img">
-									<img class="img-fluid" src="../images/img/banner/banner-img.png" alt="">
+							{{else}}
+							<div class="banner-content">
+								<h1>Nike New<br>Collection!</h1>
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et
+									dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+								<div class="add-bag d-flex align-items-center">
+									<a class="add-btn" href=""><span class="lnr lnr-arrow-right"></span></a>
+									<span class="add-text text-uppercase">View More</span>
+								</div>
+							</div>
+							{{/if}}
+						</div>
+						<div class="col-lg-7">
+							<div class="banner-img">{{#if banner}}
+								<img class="img-fluid" src="/banner-images/{{banner._id}}.jpg" alt="">
+								{{else}}
+								<img class="img-fluid" src="../images/img/banner/banner-img.png" alt="">
+								{{/if}}
+							</div>
+						</div>
+					</div>
+					<!-- single-slide -->
+					<div class="row single-slide">
+						<div class="col-lg-5">
+							<div class="banner-content">
+								<h1>Nike New <br>Collection!</h1>
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et
+									dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+								<div class="add-bag d-flex align-items-center">
+									<a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
+									<span class="add-text text-uppercase">Add to Bag</span>
 								</div>
 							</div>
 						</div>
-						<!-- single-slide -->
-						<div class="row single-slide">
-							<div class="col-lg-5">
-								<div class="banner-content">
-									<h1>Nike New <br>Collection!</h1>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-										dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-									<div class="add-bag d-flex align-items-center">
-										<a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
-										<span class="add-text text-uppercase">Add to Bag</span>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-7">
-								<div class="banner-img">
-									<img class="img-fluid" src="../images/img/banner/banner-img.png" alt="">
-								</div>
+						<div class="col-lg-7">
+							<div class="banner-img">
+								<img class="img-fluid" src="../images/img/banner/banner-img.png" alt="">
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</section>
-	<!-- End banner Area -->
-			
-			
-			
-			<div class="container mt-5 mb-5">
-				<div class="row justify-content-center">
-					<div class="col-lg-6 text-center">
-						<div class="section-title">
-							<h1>Latest Products</h1>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-								dolore
-								magna aliqua.</p>
-						</div>
+	</div>
+</section>
+<!-- End banner Area -->
+
+
+
+<div class="container mt-5 mb-5">
+	<div class="row justify-content-center">
+		<div class="col-lg-6 text-center">
+			<div class="section-title">
+				<h1>Latest Products</h1>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
+					et
+					dolore
+					magna aliqua.</p>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<!-- single product -->
+		{{#each products}}
+		<div class="col-lg-3 col-md-6">
+			<div class="single-product">
+				<img class="img-fluid" src="/product-images/{{this._id}}.jpg" alt="">
+				<div class="product-details">
+					<h6>{{this.name}}</h6>
+					<div class="price">
+						<h6>${{this.price}}.00</h6>
+						<h6 class="l-through">${{this.MRP}}  </h6>
 					</div>
-				</div>
-				<div class="row">
-					<!-- single product -->
-					{{#each products}}
-					<div class="col-lg-3 col-md-6">
-						<div class="single-product">
-							<img class="img-fluid" src="/product-images/{{this._id}}.jpg" alt="">
-							<div class="product-details">
-								<h6>{{this.name}}</h6>
-								<div class="price">
-									<h6>${{this.price}}.00</h6>
-									<h6 class="l-through">${{this.MRP}}</h6>
-								</div>
-								<div class="prd-bottom">
+					<div class="prd-bottom">
 
-									<a href="/add-to-cart/{{this._id}}" class="social-info">
-										<span class="ti-bag"></span>
-										<p class="hover-text">add to bag</p>
-									</a>
+						<a href="/add-to-cart/{{this._id}}" class="social-info">
+							<span class="ti-bag"></span>
+							<p class="hover-text">add to bag</p>
+						</a>
 
-									{{!-- <a class="social-info" onclick="return addToCart('{{this._id}}')">
-										<span class="ti-bag"></span>
-										<p class="hover-text">add to bag</p>
-									</a> --}}
+						{{!-- <a class="social-info" onclick="return addToCart('{{this._id}}')">
+							<span class="ti-bag"></span>
+							<p class="hover-text">add to bag</p>
+						</a> --}}
 
-									<a href="/add-to-wishlist/{{this._id}}" class="social-info">
-										<span class="lnr lnr-heart"></span>
-										<p class="hover-text">Wishlist</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-sync"></span>
-										<p class="hover-text">compare</p>
-									</a>
-									<a href="/productdetails/{{this._id}}" class="social-info">
-										<span class="lnr lnr-move"></span>
-										<p class="hover-text">view more</p>
-									</a>
+						<a href="/add-to-wishlist/{{this._id}}" class="social-info" >
+						{{#if this.isWishlisted}}<span class="fas fa-heart" style="font-size:14px; color:#ff6f00;"></span>
+						{{else}}	<span class="lnr lnr-heart"></span>
+						{{/if}}
+							<p class="hover-text">Wishlist</p>
+						</a>
+						<a href="" class="social-info">
+							<span class="lnr lnr-sync"></span>
+							<p class="hover-text">compare</p>
+						</a>
+						<a href="/productdetails/{{this._id}}" class="social-info">
+							<span class="lnr lnr-move"></span>
+							<p class="hover-text">view more</p>
+						</a>
 
 
-								</div>
-							</div>
-						</div>
 					</div>
-					{{/each}}
 				</div>
 			</div>
-			
-					
+		</div>
+		{{/each}}
+	</div>
+	<nav aria-label="Page navigation example">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
+			{{#for 1 pages 1}}
+			 <li class="page-item "><a class="page-link {{#ifCond this ../currentPage}} active {{/ifCond}}" href="/?page={{this}}">{{this}}</a></li>
+			{{/for}}
+
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
+</div>
+<script>
+	document.getElementById('')
+</script>

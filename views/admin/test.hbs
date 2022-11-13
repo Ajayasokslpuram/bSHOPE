@@ -1,0 +1,39 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">Coupons</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Coupons </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+
+
+
+
+
+            <div class="col-md-10 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+
+                        {{#for 0 10 2}}
+                        <span>{{this}}</span>
+                        {{/for}}
+                        
+                        <h4 class="card-title mb-4">Create New Coupon</h4>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

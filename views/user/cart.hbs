@@ -139,6 +139,17 @@
           if(response.status){
             document.getElementById('productsNetAmount').innerHTML=response.productsNetAmount;
           }
+          else{
+           
+           swal("Maximum Quantity Reached!", `Sorry we have only ${response.availableQty} items left!`, "error").then(()=>{
+            location.reload()
+           })
+          }
+          if(response.zero){
+             swal("Quantity Cannot be Zero!", '', "error").then(()=>{
+            location.reload()
+           })
+          }
         }
        
     })

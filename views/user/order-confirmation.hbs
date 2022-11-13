@@ -29,7 +29,7 @@
 						<li><a href="#"><span>Mobile</span> : {{order.deliveryDetails.mobile}}</a></li>
 					</ul>
 				</div>
-			</div>	
+			</div>
 			<div class="col-lg-4">
 				<div class="details_item">
 					<h4>Shipping Address</h4>
@@ -68,8 +68,17 @@
 							</td>
 						</tr>
 						{{/each}}
-
-
+						{{#if order.couponApplied}}
+						<tr>
+							<td>Coupon Discount</td>
+							
+							<td></td>
+							<td>
+								-${{order.couponDiscount}}.00
+							</td>
+						</tr>
+						{{/if}}
+						<tr>
 							<td>
 								<h4>Subtotal</h4>
 							</td>
@@ -88,7 +97,8 @@
 								<h5></h5>
 							</td>
 							<td>
-								<strike>$50.00</strike><p>Free</p>
+								<strike>$50.00</strike>
+								<p>Free</p>
 							</td>
 						</tr>
 						<tr>

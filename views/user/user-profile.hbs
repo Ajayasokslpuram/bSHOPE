@@ -200,11 +200,22 @@
                                     data-mdb-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                     {{#if passChangeSuccess}}
                                     <div class="alert alert-success" role="alert">
-                                        Password Changed Successfully!
+                                         Password Changed Successfully!
+                                        <script>
+                                            swal(" Password Changed Successfully!", "You can login using new Password!",
+                                                "success")
+                                        </script>
+
                                     </div>
                                     {{else if passChangeFail}}
                                     <div class="alert alert-danger" role="alert">
-                                        Password cannot be matched!
+                                         Password cannot be matched!
+                                        <script>
+                                            swal(" Password cannot be matched!", "Please Check Your Password and Try Again",
+                                                "error")
+                                        </script>
+
+
                                     </div>
                                     {{else}}
                                     Change Password
@@ -291,7 +302,13 @@
                                 <div class="accordion-body">
                                     <div class="card-body p-0">
                                         <div class="col-sm-12">
+                                            {{#if deleteStatus}}
+                                            <script>
+                                                swal("Address Deleted!", "Deleted address cannot be retrieved!",
+                                                    "error")
+                                            </script>
 
+                                            {{/if}}
                                             {{#each address}}
                                             <div class="col-md-12">
                                                 <div class="card-body">
@@ -300,7 +317,7 @@
                                                             <h6>Address {{inc @index}}</h6>
                                                         </div>
                                                         <div class="col-2">
-                                                            <a>
+                                                            <a href="/delete-address/{{this.key}}">
                                                                 <i class="fas fa-trash" style="color:#b60505;"></i>
                                                             </a>
                                                         </div>
@@ -565,7 +582,12 @@
             </div>
         </div>
 </section>
-
+<script>
+    if (deleted) {
+        console.log('deleted')
+        alert('hi')
+    }
+</script>
 <script>
     $("#referalForm").submit((e) => {
         console.log('apicalled')
