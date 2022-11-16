@@ -24,11 +24,20 @@ module.exports = {
 
             let userWithMobile = await db.get().collection(collectionNames.USER_COLLECTION).find({ mobile: userData.mobile }).toArray()
             let userWithEmail = await db.get().collection(collectionNames.USER_COLLECTION).find({ email: userData.email }).toArray()
-            if (userWithEmail.length > 0 || userWithMobile.length > 0) {
-                console.log(userWithEmail)
-                console.log(userWithMobile)
-                reject()
+            let rejectResponse={}
+            if (userWithEmail.length > 0 && userWithEmail.length) {
+                rejectResponse.emailExists=true
+                reject(rejectResponse)
             }
+           else if (userWithEmail.length > 0) {
+                rejectResponse.emailExists=true
+                reject(rejectResponse)
+            }
+            else if (userWithMobile.length > 0) {
+                rejectResponse.mobileExists=true
+                reject(rejectResponse)
+            }
+
 
             userData.address = ['sample Address']
             userData.isBlocked = false;
@@ -527,15 +536,13 @@ module.exports = {
         });
     },
 
-    getUserOrders: (userID) => {
+    getUserOrders: (userID,limit,skip) => {
         return new Promise(async (resolve, reject) => {
             console.log(userID);
             let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION)
-                .find({ userID: objectId(userID) }).toArray()
+                .find({ userID: objectId(userID) }).skip(skip).limit(limit).toArray()
             console.log(orders);
             resolve(orders.reverse())
-
-
         })
     },
     getOrderProducts: (orderID) => {

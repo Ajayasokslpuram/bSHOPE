@@ -27,6 +27,7 @@
                             <table id="orderTable" class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>No.</th>
                                         <th>Order Details</th>
                                         <th></th>
                                         <th>Address</th>
@@ -38,6 +39,7 @@
                                 <tbody>
                                     {{#each orders}}
                                     <tr>
+                                        <td>{{inc @index}}</td>
                                         <td class="py-1">
                                             <p>Placed At: <br> {{this.date}}</p><br>
                                             <p>Amount: <br>$ {{this.productsNetAmount}}</p>
@@ -69,6 +71,22 @@
                                     {{/each}}
                                 </tbody>
                             </table>
+                            <nav aria-label="...">
+                                <ul class="pagination mt-4">
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Prev</a>
+                                    </li>
+                                    {{#for 1 pages 1}}
+                                    <li class="page-item{{#ifCond this ../currentPage}} active {{/ifCond}}">
+                                        <a class="page-link " href="/admin/order-table?page={{this}}">{{this}}</a>
+                                    </li>
+                                    {{/for}}
+
+                                     <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -85,7 +103,7 @@
     ordering:  false
 } );
 $(document).ready( function () {
-    $('#orderTable').DataTable();
+    $('#rderTable').DataTable();
   
 } );
 </script>

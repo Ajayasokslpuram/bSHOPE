@@ -87,13 +87,13 @@
 		{{#each products}}
 		<div class="col-lg-3 col-md-6">
 			<div class="single-product">
-				<img class="img-fluid" src="/product-images/{{this._id}}.jpg" alt="">
-				<div class="product-details">
+				<a href="/productdetails/{{this._id}}"> <img class="img-fluid" src="/product-images/{{this._id}}.jpg" alt=""></a>
+				<a href="/productdetails/{{this._id}}"> <div class="product-details">
 					<h6>{{this.name}}</h6>
 					<div class="price">
 						<h6>${{this.price}}.00</h6>
 						<h6 class="l-through">${{this.MRP}}  </h6>
-					</div>
+					</div></a>
 					<div class="prd-bottom">
 
 						<a href="/add-to-cart/{{this._id}}" class="social-info">

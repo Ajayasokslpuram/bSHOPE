@@ -23,8 +23,10 @@
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
 ></script>
 <div class="col-lg-12 m-5">
+	
 	<form class="row contact_form m-5" enctype="multipart/form-data" action="/admin/addproducts" method="post"
 		id="contactForm" novalidate="novalidate">
+		<h4 id="err" style="color: red;"></h4>
 		<div class="col-md-6">
 			<div class="form-group">
 				<input type="text" class="form-control" id="name" name="name" placeholder="Enter item name"
@@ -56,15 +58,15 @@
 		<div class="d-flex row">
 			<div class="col-md-6">
 				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select First Image</small> </label>
-				<input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
+				<input name="image" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" onchange="viewImage(event)" />
 
 				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Second Image</small> </label>
-				<input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" />
+				<input name="image1" class="form-control form-control-lg  ml-3 " id="formFileLg" type="file" onchange="viewImage1(event)" />
 
 
 				<label for="formFileLg" class="form-label  ml-3 mt-2"><small>Select Third Image</small> </label>
 				<input name="image2" class="form-control form-control-lg  ml-3" accept="image/*" id="imgFile"
-					type="file" />
+					type="file" onchange="viewImage2(event)" />
 				<img src="" id="image1" alt="" class="imggmi" style="height:100px">
 				<div style="display:flex">
 					<div id="screen1" class="imggmi image-container" style="height: auto; width: auto"></div> <br>
@@ -92,6 +94,53 @@
 </div>
 
 <script>
+	
+					let imgFlag=[] // ====== For Validating The Image Input=========
+					function viewImage(event){
+						
+						imgFlag.push('1')
+					}
+					function viewImage1(event){
+						
+						imgFlag.push('1')
+					}
+					function viewImage2(event){
+						
+						imgFlag.push('1')
+					}
+					console.log(imgFlag,'hiiii')
+
+
+//============================================ F O R M    V A L I D A T I O N ===================================
+
+
+
+	const form=document.getElementById('contactForm')
+	const name=document.getElementById('name')
+	const category=document.getElementById('category')
+	const price=document.getElementById('price')
+	const description=document.getElementById('description')
+	const quantity=document.getElementById('quantity')
+	
+	const err=document.getElementById('err')
+
+	form.addEventListener('submit',(e)=>{
+		let messages=[]
+		if(imgFlag.length<2 || name.value==='' || category.value==="" || price.value==='' || description.value==='' || quantity.value===''){
+			messages.push('All fields Required!')
+			console.log(imgFlag,"imgflag")
+		}
+		
+		if(messages.length>0){
+			e.preventDefault()
+			err.innerText=messages.join(',')
+		
+		}
+	
+	})
+
+	
+
 
 	const imagebox1 = document.getElementById('screen1')
 	const crop_btn1 = document.getElementById('crop-1')

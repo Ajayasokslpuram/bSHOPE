@@ -102,14 +102,14 @@
 
                 <div class="card my-4 mb-lg-0" style="background-color:#eee;">
                     <div class="row ">
-                        <div class="col-md-12 ml-3 mt-3">
+                        <div class="col-md-12 mt-4 d-flex justify-content-center">
                             <h6>Wallet Balance: ${{wallet.amount}}.00</h6>
                         </div>
                     </div>
 
 
 
-                    <div class="accordion mt-2 mb-5" id="accordionExample">
+                    {{!-- <div class="accordion mt-2 mb-5" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingWallet">
                                 <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
@@ -179,6 +179,81 @@
                                 </div>
                             </div>
                         </div>
+                    </div> --}}
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success my-3 mx-5" data-toggle="modal"
+                        data-target="#exampleModalScrollable">
+                        Wallet History
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Wallet History</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {{#each wallet.transactions}}
+                                    {{#if this.transactionAmount}}
+                                    <div class="col-md-12">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-10">
+                                                    <h6>{{this.transactionDate}}</h6>
+                                                </div>
+                                            </div>
+                                            <hr class="mt-0 mb-4">
+                                            <div class="row">
+                                                <div class="col-6 mb-3">
+                                                    <h6>${{this.transactionAmount}}.00</h6>
+
+                                                </div>
+                                                <div class="col-6 mb-3">
+
+                                                    <p class="text-muted"></p>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+
+                                            </div>
+                                            <div class="row">
+                                                <p class="text-muted">{{this.transactionDesccription}}</p>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-8 mb-3">
+                                                    <p class="text-muted">Transaction Type :</p>
+
+                                                </div>
+                                                <div class="col-4 mb-3">
+
+                                                    <p>{{this.transactionType}}</p>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row">
+                                                <p class="text-muted">{{this.transactionDate}}</p>
+                                            </div>
+                                            <hr class="mt-0 mb-4">
+
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                    {{/each}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
 
@@ -193,14 +268,14 @@
 
 
 
-                    <div class="accordion" id="accordionExample">
+                    <div class="accordion mt-4" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
                                 <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
-                                    data-mdb-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    data-mdb-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                                     {{#if passChangeSuccess}}
                                     <div class="alert alert-success" role="alert">
-                                         Password Changed Successfully!
+                                        Password Changed Successfully!
                                         <script>
                                             swal(" Password Changed Successfully!", "You can login using new Password!",
                                                 "success")
@@ -209,7 +284,7 @@
                                     </div>
                                     {{else if passChangeFail}}
                                     <div class="alert alert-danger" role="alert">
-                                         Password cannot be matched!
+                                        Password cannot be matched!
                                         <script>
                                             swal(" Password cannot be matched!", "Please Check Your Password and Try Again",
                                                 "error")
@@ -222,7 +297,7 @@
                                     {{/if}}
                                 </button>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo"
                                 data-mdb-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="card-body p-0">
@@ -291,13 +366,13 @@
                     <div class="accordion mt-5" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
-                                    data-mdb-target="#collapseThree" aria-expanded="false"
+                                <button class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#collapseThree" aria-expanded="true"
                                     aria-controls="collapseThree">
                                     <h6>Saved Address</h6>
                                 </button>
                             </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                            <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree"
                                 data-mdb-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="card-body p-0">
@@ -534,48 +609,96 @@
 
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="card mb-4 mb-md-0">
                                 <div class="card-body">
-                                    <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project
-                                        Status
+                                    <p class="mb-4"><span class="text-primary font-italic me-1">my</span> Orders
+                                     
                                     </p>
-                                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 72%"
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 89%"
-                                            aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 55%"
-                                            aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                                    <div class="progress rounded mb-2" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 66%"
-                                            aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="table-responsive">
+                                        <table class="table" id="orderTable">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Order Details</th>
+                                                    <th scope="col">Address</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Details</th>
+                                                    {{!-- <th scope="col">Options</th> --}}
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {{#each orders}}
+                                                <tr>
+                                                    <td>
+                                                        <div class="media">
+                                                            <div class="d-flex">
+                                                                <p>Placed At: <br> {{this.date}}</p><br>
+                                                            </div>
+                                                        </div>
+                                                        <div class="media">
+                                                            <div class="d-flex">
+                                                                <p>Amount: <br>$ {{this.productsNetAmount}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="media">
+                                                            <div class="d-flex">
+                                                                <p>Payment Method: <br>{{this.paymentMethod}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="media">
+                                                            <div class="media-body">
+                                                                <p>{{this.deliveryDetails.name}}</p>
+                                                                <p>{{this.deliveryDetails.mobile}}</p>
+                                                                <p>{{this.deliveryDetails.email}}</p>
+                                                                <p>{{this.deliveryDetails.address}}</p>
+                                                                <p>{{this.deliveryDetails.town}}</p>
+                                                                <p>{{this.deliveryDetails.zip}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <b>{{this.status}}</b>
+                                                    </td>
+
+                                                    <td>
+                                                        <a class="btn btn-link btn-light"
+                                                            href="/view-order-products/{{this._id}}">Details</a>
+
+                                                    </td>
+                                                    {{!-- <td>
+                                                        <a class="btn btn-link btn-light"
+                                                            href="/cancel-order-products/{{this._id}}">Cancel</a>
+                                                    </td> --}}
+                                                </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                                {{#for 1 pages 1}}
+                                                <li class="page-item "><a
+                                                        class="page-link {{#ifCond this ../currentPage}} active {{/ifCond}}"
+                                                        href="/user-profile?page={{this}}">{{this}}</a></li>
+                                                {{/for}}
+
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-
-
-
-
-
-
-
                         </div>
                     </div>
                 </div>
@@ -598,8 +721,8 @@
             data: $('#referalForm').serialize(),
             success: (response) => {
                 if (response.success) {
-                    swal("Referal Claimed!", "Thank You For Choosing bShope!", "success").then(() => {
-                        location.reload('/user-profile')
+                    swal("Referal Claimed!", "Your reward will be credited zoon!", "success").then(() => {
+                        location.replace('/user-profile')
                     });
                 }
                 else {

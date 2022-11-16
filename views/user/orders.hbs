@@ -1,4 +1,3 @@
-
 <!--================ORDER Area =================-->
 <section class="cart_area">
     <div class="container">
@@ -62,20 +61,29 @@
                         {{/each}}
                     </tbody>
                 </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {{#for 1 pages 1}}
+                        <li class="page-item "><a class="page-link {{#ifCond this ../currentPage}} active {{/ifCond}}"
+                                href="/orders?page={{this}}">{{this}}</a></li>
+                        {{/for}}
+
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
 </section>
-<script>
-    $.extend($.fn.dataTable.defaults, {
 
-        ordering: false,
-        lengthChange: false
-    });
-    $(document).ready(function () {
-        $('#orderTable').DataTable();
-
-    });
-</script>
 
 <!--================End ORDER Area =================-->

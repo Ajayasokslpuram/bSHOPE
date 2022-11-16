@@ -5,6 +5,7 @@ const { response } = require('../app');
 var router = express.Router();
 var productHelpers = require('../helpers/product-helpers')
 var fs = require('fs');
+var Handlebars = require('handlebars');
 
 const verifySession = (req, res, next) => {
   if (req.session.admin) {
@@ -60,9 +61,39 @@ router.post('/adminsignin', function (req, res, next) {
 
 });
 
-router.get('/viewproducts', verifySession, function (req, res, next) {
-  productHelpers.getAllProducts().then((products) => {
-    res.render('admin/view-products', { layout: 'adminLayout', admin: true, products })
+router.get('/viewproducts', verifySession,async function (req, res, next) {
+  const perPage = 10;
+  let pageNum;
+  let skip;
+  let productCount;
+  let pages;
+  pageNum = parseInt(req.query.page)>=1?parseInt(req.query.page):1;
+  skip = (pageNum - 1) * perPage
+  await productHelpers.getProductCount().then((count) => {
+    productCount = count;
+  })
+  pages = Math.ceil(productCount / perPage)
+
+  Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
+  Handlebars.registerHelper('for', function (from, to, incr, block) {
+    var accum = '';
+    for (var i = from; i <= to; i += incr)
+      accum += block.fn(i);
+    return accum;
+  });
+  let index=parseInt(skip)>=1?skip+1:1
+  Handlebars.registerHelper("inc", function(value, options)
+  { 
+      return parseInt(value) + index;
+  });
+
+  productHelpers.getPaginatedProducts(skip, perPage).then((products) => {
+    res.render('admin/view-products', { layout: 'adminLayout', admin: true, products,totalDoc: productCount, currentPage: pageNum, pages: pages })
   })
 });
 
@@ -276,8 +307,37 @@ router.get("/set-bannner/:id", verifySession, async (req, res, next) => {
 })
 
 router.get("/order-table", verifySession, async (req, res, next) => {
-  let orders = await productHelpers.getAllOrders().then((orders) => {
-    res.render('admin/order-table', { layout: 'adminLayout', orders })
+  const perPage = 5;
+  let pageNum;
+  let skip;
+  let productCount;
+  let pages;
+  pageNum = parseInt(req.query.page)>=1?parseInt(req.query.page):1;
+  skip = (pageNum - 1) * perPage
+  await productHelpers.getOrderCount().then((count) => {
+    productCount = count;
+  })
+  pages = Math.ceil(productCount / perPage)
+let index=parseInt(skip)>=1?skip+1:1
+Handlebars.registerHelper("inc", function(value, options)
+{ 
+    return parseInt(value) + index;
+});
+
+  Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
+  Handlebars.registerHelper('for', function (from, to, incr, block) {
+    var accum = '';
+    for (var i = from; i <= to; i += incr)
+      accum += block.fn(i);
+    return accum;
+  });
+  let orders = await productHelpers.getPaginatedOrders(perPage,skip).then((orders) => {
+    res.render('admin/order-table', { layout: 'adminLayout', orders,totalDoc: productCount, currentPage: pageNum, pages: pages })
   })
 
 
@@ -315,6 +375,36 @@ router.post("/add-coupon", verifySession, async (req, res, next) => {
 })
 
 router.get("/offers", verifySession, async (req, res, next) => {
+  const perPage = 10;
+  let pageNum;
+  let skip;
+  let productCount;
+  let pages;
+  pageNum = parseInt(req.query.page)>=1?parseInt(req.query.page):1;
+  skip = (pageNum - 1) * perPage
+  await productHelpers.getProductCount().then((count) => {
+    productCount = count;
+  })
+  pages = Math.ceil(productCount / perPage)
+  let index=parseInt(skip)>=1?skip+1:1
+  Handlebars.registerHelper("inc", function(value, options)
+  { 
+      return parseInt(value) + index;
+  });
+  Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
+  Handlebars.registerHelper('for', function (from, to, incr, block) {
+    var accum = '';
+    for (var i = from; i <= to; i += incr)
+      accum += block.fn(i);
+    return accum;
+  });
+
+
   let categoryList = []
   let categoryOffers = []
   let productOffers = []
@@ -322,7 +412,7 @@ router.get("/offers", verifySession, async (req, res, next) => {
   await productHelpers.getProductOffers().then((offerList) => {
     productOffers = offerList
   })
-  await productHelpers.getAllProducts().then((productList) => {
+  await productHelpers.getPaginatedProducts(skip, perPage).then((productList) => {
     products = productList;
   })
   await productHelpers.getCategoryOffers().then((offers) => {
@@ -331,7 +421,7 @@ router.get("/offers", verifySession, async (req, res, next) => {
   await productHelpers.getAllCategories().then((categories) => {
     categoryList = categories;
   })
-  res.render('admin/offers', { layout: 'adminLayout', categoryList, categoryOffers, products, productOffers })
+  res.render('admin/offers', { layout: 'adminLayout', categoryList, categoryOffers, products, productOffers,totalDoc: productCount, currentPage: pageNum, pages: pages })
 })
 
 router.post("/add-categoryOffer", verifySession, async (req, res, next) => {

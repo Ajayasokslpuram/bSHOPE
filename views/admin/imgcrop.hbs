@@ -74,7 +74,7 @@
         document.getElementById('crop-1').style.display = 'block'
         document.getElementById('image1').style.display = 'block'
 
-        const cropper1 = new Cropper(img1, {
+        const cropper1 = new Cropper(img1, { 
             autoCropArea: 1,
             viewMode: 1,
             scalable: false,
@@ -100,5 +100,50 @@
         })
 
     })
+
+
+    	 imgFlag=[]// ====== For Validating The Image Input=========
+					function viewImage(event){
+						document.getElementById('imgUpdate').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
+					}
+					function viewImage1(event){
+						document.getElementById('imgUpdate1').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
+					}
+					function viewImage2(event){
+						document.getElementById('imgUpdate2').src=URL.createObjectURL(event.target.files[0])
+						imgFlag.push('1')
+					}
+					console.log(imgFlag)
+					
+
+
+//============================================ F O R M    V A L I D A T I O N ===================================
+
+
+
+	const form=document.getElementById('contactForm')
+	const name=document.getElementById('name')
+	const category=document.getElementById('category')
+	const price=document.getElementById('price')
+	const description=document.getElementById('description')
+	const quantity=document.getElementById('quantity')
+	
+	const err=document.getElementById('err')
+
+	form.addEventListener('submit',(e)=>{
+		let messages=[]
+		if(name.value==='' || category.value==="" || price.value==='' || description.value==='' || quantity.value===''|| imgFlag.length<3){
+			messages.push('All fields Required!')
+		}
+		
+		if(messages.length>0){
+			e.preventDefault()
+			err.innerText=messages.join(',')
+		
+		}
+	
+	})
 
 </script>

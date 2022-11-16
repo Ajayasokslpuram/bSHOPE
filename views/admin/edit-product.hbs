@@ -33,7 +33,7 @@
 							<div class="mt-3  col-md-4 col-xs-5">
 							<label for="formFileLg" class="form-label mt-2">Category</label>
 							<select class="mb-4" name="category" >
-							<option value="" disabled selected>{{product.category}}</option>
+							<option value="{{product.category}}"disabled selected>{{product.category}}</option>
 							{{#each categories}}
 							<option  value="{{this.name}}">{{this.name}}</option>
 							{{/each}}
@@ -92,7 +92,7 @@
 					</form>
 				</div>
 				<script>
-					imgFlag=[] // ====== For Validating The Image Input=========
+					let imgFlag=[]// ====== For Validating The Image Input=========
 					function viewImage(event){
 						document.getElementById('imgUpdate').src=URL.createObjectURL(event.target.files[0])
 						imgFlag.push('1')
@@ -106,6 +106,7 @@
 						imgFlag.push('1')
 					}
 					console.log(imgFlag)
+					
 
 
 //============================================ F O R M    V A L I D A T I O N ===================================
@@ -123,7 +124,7 @@
 
 	form.addEventListener('submit',(e)=>{
 		let messages=[]
-		if(name.value==='' || category.value==="" || price.value==='' || description.value==='' || quantity.value===''){
+		if(name.value==='' || category.value==="" || price.value==='' || description.value==='' || quantity.value===''|| ){
 			messages.push('All fields Required!')
 		}
 		

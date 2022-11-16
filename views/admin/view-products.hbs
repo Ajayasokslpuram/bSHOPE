@@ -8,7 +8,9 @@
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="page-header">
-            <a href="/admin/addproducts"><h3 class="page-title">Add Products  +</h3></a>
+            <a href="/admin/addproducts">
+                <h3 class="page-title">Add Products +</h3>
+            </a>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Tables</a></li>
@@ -27,6 +29,7 @@
                             <table id="tableUser" class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>No.</th>
                                         <th>Image</th>
                                         <th>Title</th>
                                         <th>Price</th>
@@ -37,6 +40,7 @@
                                 <tbody>
                                     {{#each products}}
                                     <tr>
+                                        <td>{{inc @index}}</td>
                                         <td class="py-1">
                                             <img src="/product-images/{{this._id}}.jpg" alt=""
                                                 style="width: 60px; height: 60px" />
@@ -57,6 +61,22 @@
                                     {{/each}}
                                 </tbody>
                             </table>
+                            <nav aria-label="...">
+                                <ul class="pagination mt-4">
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Prev</a>
+                                    </li>
+                                    {{#for 1 pages 1}}
+                                    <li class="page-item{{#ifCond this ../currentPage}} active {{/ifCond}}">
+                                        <a class="page-link " href="/admin/viewproducts?page={{this}}">{{this}}</a>
+                                    </li>
+                                    {{/for}}
+
+                                     <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -65,15 +85,10 @@
     </div>
 
 
-    <script>
-        $(document).ready(function () {
-            $('#tableUser').DataTable();
-        });
-    </script>
 
 
     <script>
         $(document).ready(function () {
-            $('#productsTable').DataTable();
+            $('roductsTable').DataTable();
         });
     </script>

@@ -44,7 +44,7 @@ router.get('/', async function (req, res, next) {
   let skip;
   let productCount;
   let pages;
-  pageNum = parseInt(req.query.page);
+  pageNum = parseInt(req.query.page) >= 1 ? parseInt(req.query.page) : 1;
   console.log(typeof (pageNum))
   skip = (pageNum - 1) * perPage
   await productHelpers.getProductCount().then((count) => {
@@ -190,9 +190,16 @@ router.post('/signup', async function (req, res, next) {
       })
     })
 
-  }).catch(() => {
-    req.flash('userExists', 'Email or Mobile is Already Registered !')
-    res.redirect('/registration')
+  }).catch((response) => {
+    if (response.mobileExists) {
+      req.flash('userExists', 'This Mobile number is already registered with us!')
+      res.redirect('/registration')
+    }
+    if (response.emailExists) {
+      req.flash('userExists', 'This Email is  already registered with us! !')
+      res.redirect('/registration')
+    }
+
   })
 })
 
@@ -553,8 +560,36 @@ router.get("/order-success", verifySession, async (req, res, next) => {
 
 
 router.get("/orders", verifySession, async (req, res, next) => {
-  let orders = await userHelpers.getUserOrders(req.session.user._id)
-  res.render('user/orders', { user: req.session.user, orders })
+  const perPage = 5;
+  let pageNum;
+  let skip;
+  let productCount;
+  let pages;
+  pageNum = parseInt(req.query.page) >= 1 ? parseInt(req.query.page) : 1;
+  skip = (pageNum - 1) * perPage
+  await productHelpers.getProductCount().then((count) => {
+    productCount = count;
+  })
+  pages = Math.ceil(productCount / perPage)
+  let index = parseInt(skip) >= 1 ? skip + 1 : 1
+  Handlebars.registerHelper("inc", function (value, options) {
+    return parseInt(value) + index;
+  });
+  Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
+  Handlebars.registerHelper('for', function (from, to, incr, block) {
+    var accum = '';
+    for (var i = from; i <= to; i += incr)
+      accum += block.fn(i);
+    return accum;
+  });
+
+  let orders = await userHelpers.getUserOrders(req.session.user._id, perPage, skip)
+  res.render('user/orders', { user: req.session.user, orders, totalDoc: productCount, currentPage: pageNum, pages: pages })
 })
 
 router.get("/view-order-products/:id", verifySession, async (req, res, next) => {
@@ -602,14 +637,55 @@ router.get("/cancel-order-products/:id", verifySession, async (req, res, next) =
 
 
 router.get("/user-profile", verifySession, async (req, res, next) => {
+  const perPage = 4;
+  let pageNum;
+  let skip;
+  let productCount;
+  let pages;
+  pageNum = parseInt(req.query.page) >= 1 ? parseInt(req.query.page) : 1;
+  skip = (pageNum - 1) * perPage
+  await productHelpers.getProductCount().then((count) => {
+    productCount = count;
+  })
+  pages = Math.ceil(productCount / perPage)
+  let index = parseInt(skip) >= 1 ? skip + 1 : 1
+  Handlebars.registerHelper("inc", function (value, options) {
+    return parseInt(value) + index;
+  });
+  Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
+  Handlebars.registerHelper('for', function (from, to, incr, block) {
+    var accum = '';
+    for (var i = from; i <= to; i += incr)
+      accum += block.fn(i);
+    return accum;
+  });
+
+
+  let orders = await userHelpers.getUserOrders(req.session.user._id, perPage, skip)
   let walletObj = {}
-  userHelpers.getWallet(req.session.user).then((wallet) => {
+  await userHelpers.getWallet(req.session.user).then((wallet) => {
     walletObj = wallet;
   })
-  userHelpers.getAllAddress(req.session.user).then((address) => {
+  await userHelpers.getAllAddress(req.session.user).then((address) => {
     console.log(address)
     console.log(walletObj, 'walletobj')
-    res.render('user/user-profile', { address, user: req.session.user, deleteStatus: req.flash('deleteStatus'), passChangeSuccess: req.flash('updateStatusSuccess'), passChangeFail: req.flash('updateStatusFail'), wallet: walletObj })
+    res.render('user/user-profile', {
+      orders,
+      address,
+      user: req.session.user,
+      deleteStatus: req.flash('deleteStatus'),
+      passChangeSuccess: req.flash('updateStatusSuccess'),
+      passChangeFail: req.flash('updateStatusFail'),
+      wallet: walletObj,
+      totalDoc: productCount,
+      currentPage: pageNum,
+      pages: pages
+    })
   })
 
 

@@ -1,6 +1,7 @@
 var db = require('../config/connection')
 var collectionNames = require('../config/collections')
 const { response } = require('../app')
+const { order } = require('paypal-rest-sdk')
 var objectId = require('mongodb').ObjectId
 module.exports = {
 
@@ -81,7 +82,7 @@ module.exports = {
             }
             else {
                 db.get().collection(collectionNames.CATEGORY_COLLECTION).insertOne(category).then(() => {
-                 
+
                 })
                 resolve()
             }
@@ -223,8 +224,23 @@ module.exports = {
     },
     getAllOrders: () => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION).find().sort({ _id: -1 }).toArray()
+            let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION).find().toArray()
+            orders=orders.reverse()
             resolve(orders)
+        })
+
+    },
+    getPaginatedOrders: (limit, skip) => {
+        return new Promise(async (resolve, reject) => {
+            let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION).find().skip(skip).limit(limit).toArray()
+            // let slicedOrders=orders.slice
+            resolve(orders)
+        })
+    },
+    getOrderCount: () => {
+        return new Promise(async (resolve, reject) => {
+            let count = await db.get().collection(collectionNames.ORDER_COLLLECTION).countDocuments()
+            resolve(count)
         })
 
     },
