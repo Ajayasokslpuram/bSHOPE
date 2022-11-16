@@ -555,6 +555,7 @@ router.post('/verify-payment', verifySession, (req, res, next) => {
 router.get("/order-success", verifySession, async (req, res, next) => {
   let orders = await userHelpers.getUserOrders(req.session.user._id)
   let order = orders[0]
+  console.log(order)
   res.render('user/order-confirmation', { user: req.session.user, order })
 })
 
@@ -567,8 +568,9 @@ router.get("/orders", verifySession, async (req, res, next) => {
   let pages;
   pageNum = parseInt(req.query.page) >= 1 ? parseInt(req.query.page) : 1;
   skip = (pageNum - 1) * perPage
-  await productHelpers.getProductCount().then((count) => {
+  await userHelpers.userOrderCount(req.session.user._id).then((count) => {
     productCount = count;
+    console.log(count,'count')
   })
   pages = Math.ceil(productCount / perPage)
   let index = parseInt(skip) >= 1 ? skip + 1 : 1
@@ -588,7 +590,7 @@ router.get("/orders", verifySession, async (req, res, next) => {
     return accum;
   });
 
-  let orders = await userHelpers.getUserOrders(req.session.user._id, perPage, skip)
+  let orders = await userHelpers.getPaginatedUserOrders(req.session.user._id, perPage, skip)
   res.render('user/orders', { user: req.session.user, orders, totalDoc: productCount, currentPage: pageNum, pages: pages })
 })
 
@@ -644,8 +646,9 @@ router.get("/user-profile", verifySession, async (req, res, next) => {
   let pages;
   pageNum = parseInt(req.query.page) >= 1 ? parseInt(req.query.page) : 1;
   skip = (pageNum - 1) * perPage
-  await productHelpers.getProductCount().then((count) => {
+  await userHelpers.userOrderCount(req.session.user._id).then((count) => {
     productCount = count;
+    console.log(count,'count')
   })
   pages = Math.ceil(productCount / perPage)
   let index = parseInt(skip) >= 1 ? skip + 1 : 1
@@ -666,7 +669,7 @@ router.get("/user-profile", verifySession, async (req, res, next) => {
   });
 
 
-  let orders = await userHelpers.getUserOrders(req.session.user._id, perPage, skip)
+  let orders = await userHelpers.getPaginatedUserOrders(req.session.user._id, perPage, skip)
   let walletObj = {}
   await userHelpers.getWallet(req.session.user).then((wallet) => {
     walletObj = wallet;

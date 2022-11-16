@@ -535,14 +535,27 @@ module.exports = {
             });
         });
     },
-
-    getUserOrders: (userID,limit,skip) => {
+    userOrderCount: (userID) => {
+        return new Promise(async (resolve, reject) => {
+            let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION).find({ userID: objectId(userID) }).toArray()
+            let count=await orders.length
+            resolve(count)
+        })
+    },
+    getUserOrders:(userID)=>{
+        return new Promise(async(resolve,reject)=>{
+            let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION).find({ userID: objectId(userID) }).toArray()
+            resolve(orders.reverse())
+        })
+    },
+    getPaginatedUserOrders: (userID,limit,skip) => {
         return new Promise(async (resolve, reject) => {
             console.log(userID);
             let orders = await db.get().collection(collectionNames.ORDER_COLLLECTION)
                 .find({ userID: objectId(userID) }).skip(skip).limit(limit).toArray()
-            console.log(orders);
-            resolve(orders.reverse())
+            console.log(orders,'paginated orders');
+            let resolveOrder=await orders.reverse()
+            resolve(orders)
         })
     },
     getOrderProducts: (orderID) => {
